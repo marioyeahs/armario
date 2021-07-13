@@ -5,7 +5,7 @@ from django.db import models
 class Cliente(models.Model):
     numero = models.IntegerField()
     def __str__(self):
-        return self.numero
+        return f"Cliente {self.numero}"
 
 class Marca(models.Model):
     nombre = models.CharField(max_length=255)
