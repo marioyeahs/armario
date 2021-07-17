@@ -1,0 +1,20 @@
+{% extends 'mercado/layout.html' %}
+
+{% block body %}
+
+<h1>Comprando producto: {{producto.modelo}} </h1>
+<ul>
+    <li>Marca: {{producto.marca}}</li>
+    <li>Talla: {{talla}}</li>
+    <li>Precio: ${{monto}}</li>
+    <li>Envío: $200</li>
+    <li>Comisión: $</li>
+    <li>Total: ${{total}}</li>
+</ul>
+
+<strong>
+    <a href="{% url 'mercado:comprado' producto.id talla total%}">Comprar</a>
+</strong>
+
+
+{% endblock %}

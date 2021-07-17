@@ -1,0 +1,31 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+<h1>Detalles del producto {{producto.size_type}}, {{producto.depto}}</h1>
+
+
+<form action="{% url 'mercado:compra' producto.id %}" method="post"> 
+    {% csrf_token %}
+    <fieldset>
+    <legend><h1>Compra {{ producto.modelo }}</h1></legend>
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+    {% endif %} 
+    {% for talla in tallas %}
+    <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
+    <label for="talla{{ forloop.counter }}">{{ talla }}</label><br> 
+    {% endfor %}
+    <label>Monto:</label>
+    <input type="label" name="monto">
+    </fieldset>
+    <input type="submit" value="Comprar"> </form>
+
+<ul>
+    <li><a href="{% url 'mercado:venta' producto.id %}">Vender</a></li>
+    <li><a href="{% url 'mercado:compra' producto.id %}">Comprar</a></li>
+</ul>
+
+
+
+{% endblock %}
