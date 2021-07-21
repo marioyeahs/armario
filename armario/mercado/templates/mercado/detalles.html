@@ -4,6 +4,8 @@
 
 <h1>Detalles del producto {{producto.size_type}}, {{producto.depto}}</h1>
 
+<hr>
+<p>{{oferta.monto}} - {{oferta.talla}}</p>
 
 <form action="{% url 'mercado:compra' producto.id %}" method="post"> 
     {% csrf_token %}
@@ -26,6 +28,13 @@
     <li><a href="{% url 'mercado:compra' producto.id %}">Comprar</a></li>
 </ul>
 
-
+<h1>Ofertas</h1>
+<ul>
+    {% for oferta in ofertas %}
+    <li>{{oferta.monto}} - {{oferta.talla}}</li>
+    {% empty %}
+    <li>Aún no se han realizado ofertas en este producto</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}
