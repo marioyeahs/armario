@@ -1,6 +1,7 @@
 from django.http.response import HttpResponse
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta
@@ -31,9 +32,11 @@ def index(request):
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     tallas = fam_member(producto.size_type,producto.depto)
+    ofertas = Oferta.objects.filter(articulo=producto_id)
     return render(request,"mercado/detalles.html", {
         'producto':producto,
         'tallas':tallas,
+        'ofertas':ofertas,
         })
 
 def compra(request, producto_id):
@@ -60,6 +63,7 @@ def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     return render(request,"mercado/venta.html", {'producto':producto})
 
+@login_required
 def comprado(request,producto_id,talla,total):
     p = Cliente.objects.get(pk=5)
     producto = get_object_or_404(Mercancia, pk=producto_id)
