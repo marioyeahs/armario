@@ -2,10 +2,7 @@
 
 {% block body %}
 
-<h1>Detalles del producto {{producto.size_type}}, {{producto.depto}}</h1>
-
-<hr>
-<p>{{oferta.monto}} - {{oferta.talla}}</p>
+<h1>{{producto.modelo}}</h1>
 
 <form action="{% url 'mercado:compra' producto.id %}" method="post"> 
     {% csrf_token %}
@@ -14,27 +11,14 @@
     {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>
     {% endif %} 
-    {% for talla in tallas %}
+    {% for talla,oferta in ventas %}
     <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-    <label for="talla{{ forloop.counter }}">{{ talla }}</label><br> 
+    <label for="talla{{ forloop.counter }}">{{ talla }} - {{oferta.monto}}</label><br> 
     {% endfor %}
     <label>Monto:</label>
     <input type="label" name="monto">
     </fieldset>
-    <input type="submit" value="Comprar"> </form>
-
-<ul>
-    <li><a href="{% url 'mercado:venta' producto.id %}">Vender</a></li>
-    <li><a href="{% url 'mercado:compra' producto.id %}">Comprar</a></li>
-</ul>
-
-<h1>Ofertas</h1>
-<ul>
-    {% for oferta in ofertas %}
-    <li>{{oferta.monto}} - {{oferta.talla}}</li>
-    {% empty %}
-    <li>Aún no se han realizado ofertas en este producto</li>
-    {% endfor %}
-</ul>
+    <input type="submit" value="Comprar"> 
+</form>
 
 {% endblock %}
