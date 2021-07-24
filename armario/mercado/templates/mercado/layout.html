@@ -7,6 +7,23 @@
     <title>{% block title %}Armario - México{% endblock %}</title>
 </head>
 <body>
+    <sidebar>
+        <ul class="sidebar-nav">
+        
+    <!-- Lo que esto hace es añadir el párametro URL next que contiene la dirección 
+    (URL) de la página actual, al final de la URL enlazada. Después de que el 
+    usuario haya iniciado o cerrado sesión con éxito, las vistas usarán el valor 
+    de este "next" para redirigir al usuario de vuelta a la página donde pincharon 
+    primeramente el enlace de inicio/cierre de sesión. -->
+        
+            {% if user.is_authenticated %}
+            <li>Usuario: {{ user.get_username }}</li>
+            <li><a href="{% url 'logout'%}?next={{request.path}}">Cerrar Sesión</a></li>
+            {% else %}
+            <li><a href="{% url 'login'%}?next={{request.path}}">Iniciar Sesión</a></li>
+            {% endif %}
+        </ul>
+    </sidebar>
     {% block body %}
     {% endblock %}
 </body>
