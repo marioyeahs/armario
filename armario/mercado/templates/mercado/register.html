@@ -1,0 +1,13 @@
+{% extends "./layout.html" %}
+
+{% block body %}
+
+<h1>Regístrate</h1>
+
+<form action="{% url 'mercado:register' %}" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Registrarse!">
+</form>
+
+{% endblock %}
