@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from mercado.forms import registerForm
+from mercado.forms import registerForm, sizeForm
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta
@@ -57,11 +57,13 @@ def register(request):
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     tallas = fam_member(producto.size_type,producto.depto)
-    #ofertas = Oferta.objects.filter(articulo=producto_id)
     ofertas=[]
+
     for i in tallas:
         ofertas+=[Oferta.objects.filter(articulo=producto,talla=i).last()]
+
     ventas=zip(tallas,ofertas)
+
     return render(request,"mercado/detalles.html", {
         'producto':producto,
         'tallas':tallas,
@@ -97,17 +99,17 @@ def venta(request,producto_id):
     return render(request,"mercado/venta.html", {'producto':producto})
 
 @login_required
-def comprado(request,producto_id,talla,total):
+def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    # talla = request.POST['talla']
-    # total = request.POST['total']
-    o=Oferta(monto=total, comprador=p,talla=talla,articulo=producto)
+    total=request.POST['total']
+    size=request.POST['talla']
+    o=Oferta(monto=total,comprador=p,talla=size,articulo= producto)
     o.save()
     
     return render(request,"mercado/comprado.html",{
         "producto":producto,
-        "talla":talla,
+        "talla":size,
         "total":total,
         })
 

@@ -43,4 +43,4 @@ class Oferta(models.Model):
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo}"
+        return f"${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
