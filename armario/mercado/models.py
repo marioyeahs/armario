@@ -1,8 +1,9 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Cliente(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     numero = models.IntegerField()
     def __str__(self):
         return f"Cliente {self.numero}"
@@ -38,7 +39,7 @@ class Mercancia(models.Model):
 
 class Oferta(models.Model):
     monto = models.IntegerField()
-    comprador = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
     def __str__(self):

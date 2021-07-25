@@ -41,8 +41,11 @@ def register(request):
             usuario = form.cleaned_data['usuario']
             email = form.cleaned_data['email']
             passwd = form.cleaned_data['passwd']
+            phone = form.cleaned_data['phone']
             new_user = User.objects.create_user(usuario,email,passwd)
             new_user.save()
+            new_client = Cliente(user=new_user,numero=phone)
+            new_client.save()
 
             return HttpResponseRedirect(reverse('mercado:index'))
     else:
@@ -95,7 +98,7 @@ def venta(request,producto_id):
 
 @login_required
 def comprado(request,producto_id,talla,total):
-    p = Cliente.objects.get(pk=request.user.pk)
+    p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
     # talla = request.POST['talla']
     # total = request.POST['total']

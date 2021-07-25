@@ -13,7 +13,7 @@
     {% endif %} 
     {% for talla,oferta in ventas %}
     <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-    <label for="talla{{ forloop.counter }}">{{ talla }} - {{oferta.monto}}</label><br> 
+    <label for="talla{{ forloop.counter }}">{{ talla }} - {{oferta.monto}}: {{oferta.comprador}}</label><br> 
     {% endfor %}
     <label>Monto:</label>
     <input type="label" name="monto">
