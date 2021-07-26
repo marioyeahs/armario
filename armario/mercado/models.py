@@ -37,10 +37,18 @@ class Mercancia(models.Model):
         return f"{self.marca} {self.modelo}, {self.size_type}."
 
 
-class Oferta(models.Model):
+class Oferta_compra(models.Model):
     monto = models.IntegerField()
     comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
+        return f"Compra: ${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
+
+class Oferta_venta(models.Model):
+    monto = models.IntegerField()
+    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
+    talla = models.CharField(max_length=5, null=True,blank=True)
+    articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"Venta: ${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
