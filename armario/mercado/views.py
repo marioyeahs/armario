@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from mercado.forms import registerForm, sizeForm
 
 # Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta_compra
+from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta
 
 def fam_member(type,dept):
     sizes = []
@@ -57,18 +57,23 @@ def register(request):
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     tallas = fam_member(producto.size_type,producto.depto)
-    ofertas=[]
+    ofertas_compra=[]
+    ofertas_venta=[]
 
     for i in tallas:
-        ofertas+=[Oferta_compra.objects.filter(articulo=producto,talla=i).last()]
+        ofertas_compra+=[Oferta_compra.objects.filter(articulo=producto,talla=i).last()]
+    
+    for i in tallas:
+        ofertas_venta+=[Oferta_venta.objects.filter(articulo=producto,talla=i).last()]
 
-    ventas=zip(tallas,ofertas)
+    compras=zip(tallas,ofertas_compra)
+    ventas=zip(tallas,ofertas_venta)
 
     return render(request,"mercado/detalles.html", {
         'producto':producto,
         'tallas':tallas,
-        'ofertas':ofertas,
         'ventas':ventas,
+        'compras':compras,
         })
 
 def compra(request, producto_id):
@@ -95,8 +100,26 @@ def compra(request, producto_id):
 
 def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
+    try:
+        talla=request.POST['talla']
+        #comprador
+        monto=int(request.POST['monto'])
+        percentage=monto*.07
+        total=int(monto-200-percentage)
+    except(KeyError,producto.DoesNotExist):
 
-    return render(request,"mercado/venta.html", {'producto':producto})
+        return render(request, "mercado/compra.html",{
+            'producto':producto,
+            'error_message':"You didn´t select a Size"
+            })
+    else:
+
+        return render(request,"mercado/venta.html", {
+            'producto':producto,
+            'total':total,
+            'talla':talla,
+            'monto':monto,
+            })
 
 @login_required
 def comprado(request,producto_id):
@@ -108,6 +131,21 @@ def comprado(request,producto_id):
     o.save()
     
     return render(request,"mercado/comprado.html",{
+        "producto":producto,
+        "talla":size,
+        "total":total,
+        })
+
+@login_required
+def vendido(request,producto_id):
+    p = User.objects.get(pk=request.user.pk)
+    producto = get_object_or_404(Mercancia, pk=producto_id)
+    total=request.POST['total']
+    size=request.POST['talla']
+    o=Oferta_venta(monto=total,comprador=p,talla=size,articulo= producto)
+    o.save()
+    
+    return render(request,"mercado/vendido.html",{
         "producto":producto,
         "talla":size,
         "total":total,
