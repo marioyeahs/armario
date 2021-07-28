@@ -2,4 +2,22 @@
 
 {% block body %}
     <h1>Vendiendo producto: {{producto.modelo}}</h1>
+
+
+    <p>Marca: {{producto.marca}}</p> 
+    <p>Precio: ${{monto}}.00 mxn</p>
+    <p>Envío: $200.00 mxn</p>
+    <p>Comisión: $ -3%</p>
+
+    <form action="{% url 'mercado:vendido' producto.id %}" method="POST">
+        {% csrf_token %}
+        <label for="talla">Talla: {{talla}}</label>
+        <input type="hidden" name="talla" value="{{talla}}">
+        <p></p>
+        <label for="total">Total: ${{total}}.00 mxn</label>
+        <input type="hidden" name="total" value={{total}}>
+        <p></p>
+        <input type="submit" value="Vender">
+    </form>
+
 {% endblock %}
