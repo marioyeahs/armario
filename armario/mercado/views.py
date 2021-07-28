@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from mercado.forms import registerForm, sizeForm
 
 # Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta
+from .models import Cliente, Marca, Mercancia, Oferta_compra
 
 def fam_member(type,dept):
     sizes = []
@@ -60,7 +60,7 @@ def detalles(request,producto_id):
     ofertas=[]
 
     for i in tallas:
-        ofertas+=[Oferta.objects.filter(articulo=producto,talla=i).last()]
+        ofertas+=[Oferta_compra.objects.filter(articulo=producto,talla=i).last()]
 
     ventas=zip(tallas,ofertas)
 
@@ -104,7 +104,7 @@ def comprado(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     total=request.POST['total']
     size=request.POST['talla']
-    o=Oferta(monto=total,comprador=p,talla=size,articulo= producto)
+    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo= producto)
     o.save()
     
     return render(request,"mercado/comprado.html",{

@@ -5,8 +5,8 @@
 <h1>Comprando producto: {{producto.modelo}} </h1>
 
     <p>Marca: {{producto.marca}}</p> 
-    <p>Precio: ${{monto}}</p>
-    <p>Envío: $200</p>
+    <p>Precio: ${{monto}}.00 mxn</p>
+    <p>Envío: $200.00 mxn</p>
     <p>Comisión: $</p>
 
 <form action="{% url 'mercado:comprado' producto.id %}" method="POST">

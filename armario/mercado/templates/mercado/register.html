@@ -6,7 +6,7 @@
 
 <form action="{% url 'mercado:register' %}" method="POST">
     {% csrf_token %}
-    {{form}}
+    {{form.as_p}}
     <input type="submit" value="Registrarse!">
 </form>
 

@@ -9,11 +9,11 @@
     <fieldset>
     <legend><h1>Compra {{ producto.modelo }}</h1></legend>
     {% if error_message %}
-    <p><strong>{{ error_message }}</strong></p>
+        <p><strong>{{ error_message }}</strong></p>
     {% endif %} 
     {% for talla,oferta in ventas %}
-    <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-    <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta.monto}} - {{oferta.comprador}}</label><br> 
+        <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
+        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta.monto}} - {{oferta.comprador}}</label><br> 
     {% endfor %}
     <label>Monto:</label>
     <input type="label" name="monto">
