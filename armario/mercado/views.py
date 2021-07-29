@@ -151,4 +151,14 @@ def vendido(request,producto_id):
         "total":total,
         })
 
+def mis_ofertas(request):
+    p = User.objects.get(pk=request.user.pk)
+    ofertas_compra = Oferta_compra.objects.filter(comprador=p)
+    ofertas_venta = Oferta_venta.objects.filter(comprador=p)
+    return render(request, 'mercado/mis_ofertas.html',{
+        'ofertas_compra':ofertas_compra,
+        'ofertas_venta':ofertas_venta,
+    })
+    
+
 
