@@ -1,0 +1,10 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+    <h2>Productos</h2>
+    <ul>
+        {% for producto in object_list %}
+            <li>{{ producto.modelo }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
