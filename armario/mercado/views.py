@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from mercado.forms import registerForm, sizeForm
+from django.views.generic import ListView
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta
@@ -161,4 +162,6 @@ def mis_ofertas(request):
     })
     
 
+class MercanciaListView(ListView):
+    model = Mercancia
 
