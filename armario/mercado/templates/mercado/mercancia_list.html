@@ -3,8 +3,28 @@
 {% block body %}
     <h2>Productos</h2>
     <ul>
-        {% for producto in object_list %}
+        {% for producto in mercancia_list %}
             <li>{{ producto.modelo }}</li>
+        {% empty %}
+            <li>No hay productos de mujer</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Adidas</h2>
+    <ul>
+        {% for producto in adidas_product %}
+            <li>{{ producto.modelo }}</li>
+        {% empty %}
+            <li>No hay productos de mujer</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Nike</h2>
+    <ul>
+        {% for producto in nike_product %}
+            <li>{{ producto.modelo }}</li>
+        {% empty %}
+            <li>No hay productos de mujer</li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -165,3 +165,14 @@ def mis_ofertas(request):
 class MercanciaListView(ListView):
     model = Mercancia
 
+    # def get_queryset(self):
+    #     return Mercancia.objects.filter(size_type='W')
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(MercanciaListView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        context['nike_product'] = Mercancia.objects.filter(marca=1)
+        context['adidas_product'] = Mercancia.objects.filter(marca=2)
+        return context
+
