@@ -4,15 +4,12 @@
 
 <h1>ARMARIO</h1>
 
-{% if productos %}
+
 <ul>
     {% for producto in productos %}
         <li><a href="{% url 'mercado:detalles' producto.id %}" target="_blank">{{producto.modelo}}</a></li>
     {% endfor %}
 </ul>
     
-{% else %}
-    <p>No hay productos.</p>
-{% endif %}
 
 {% endblock %}

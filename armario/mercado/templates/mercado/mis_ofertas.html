@@ -5,9 +5,12 @@
 <h1>Mis ofertas</h1>
 
 <h1>Compra:</h1>
+
 <ul>
     {% for oferta in ofertas_compra %}
         <li><a href="/mercado/{{oferta.articulo.id}}/detalles/">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}}</a></li>
+    {% empty %}
+        <li>No has realizado ofertas.</li>
     {% endfor %}
 </ul>
 
@@ -15,6 +18,8 @@
 <ul>
     {% for oferta in ofertas_venta %}
         <li><a href="/mercado/{{oferta.articulo.id}}/detalles/">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}}</a></li>
+        {% empty %}
+            <li>No has realizado ofertas.</li>
     {% endfor %}
 </ul>
 
