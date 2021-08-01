@@ -30,10 +30,6 @@ def fam_member(type,dept):
 
     return sizes
 
-def index(request):
-    productos = Mercancia.objects.all()
-
-    return render(request, 'mercado/index.html', {'productos':productos})
 
 def register(request):
     if request.method == 'POST':
@@ -177,11 +173,6 @@ class MercanciaListView(ListView):
         context['adidas_product'] = Mercancia.objects.filter(marca=2)
         return context
     
-    def get_absolute_url(self):
-        return reverse('mercado:mercancia-detail',args=[int(self.id)])
-
-class MercanciaDetailView(DetailView):
-    model = Mercancia
 
 class MarcaListView(ListView):
     model = Marca
