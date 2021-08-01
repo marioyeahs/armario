@@ -1,10 +1,18 @@
 {% extends "mercado/layout.html" %}
 
 {% block body %}
-    <h2>Productos</h2>
+
+    Marcas 
+    <ul>
+        {% for marca in marcas %}
+            <li><a href="{% url 'mercado:marca' marca %}" >{{marca}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h1>Productos</h1>
     <ul>
         {% for producto in mercancia_list %}
-            <li>{{ producto.modelo }}</li>
+            <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
         {% empty %}
             <li>No hay productos de mujer</li>
         {% endfor %}
@@ -13,7 +21,7 @@
     <h2>Adidas</h2>
     <ul>
         {% for producto in adidas_product %}
-            <li>{{ producto.modelo }}</li>
+            <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
         {% empty %}
             <li>No hay productos de mujer</li>
         {% endfor %}
@@ -22,7 +30,7 @@
     <h2>Nike</h2>
     <ul>
         {% for producto in nike_product %}
-            <li>{{ producto.modelo }}</li>
+            <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
         {% empty %}
             <li>No hay productos de mujer</li>
         {% endfor %}
