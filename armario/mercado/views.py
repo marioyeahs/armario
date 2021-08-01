@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from mercado.forms import registerForm, sizeForm
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta
@@ -172,7 +172,31 @@ class MercanciaListView(ListView):
         # Call the base implementation first to get the context
         context = super(MercanciaListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
+        context['marcas']=Marca.objects.all()
         context['nike_product'] = Mercancia.objects.filter(marca=1)
         context['adidas_product'] = Mercancia.objects.filter(marca=2)
         return context
+    
+    def get_absolute_url(self):
+        return reverse('mercado:mercancia-detail',args=[int(self.id)])
+
+class MercanciaDetailView(DetailView):
+    model = Mercancia
+
+class MarcaListView(ListView):
+    model = Marca
+    template_name = 'mercado/mercancia_por_marca.html'
+
+    def get_queryset(self):
+        self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
+        return Marca.objects.filter(nombre=self.marca)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in the publisher
+        context['productos'] = Mercancia.objects.filter(marca=self.marca)
+        context['marca']=self.marca
+        return context
+
 
