@@ -1,0 +1,15 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+MARCA {{marca}}
+
+<ul>
+    {% for producto in productos %}
+        <li>{{ producto.modelo}}</li>
+    {% endfor %}
+</ul>
+
+
+
+{% endblock %}
