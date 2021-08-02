@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from mercado.forms import registerForm, sizeForm
 from django.views.generic import ListView, DetailView
+from datetime import datetime
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta
@@ -124,7 +125,8 @@ def comprado(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     total=request.POST['total']
     size=request.POST['talla']
-    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo= producto)
+    today = datetime.today()
+    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=today)
     o.save()
     
     return render(request,"mercado/comprado.html",{
@@ -139,7 +141,7 @@ def vendido(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     total=request.POST['total']
     size=request.POST['talla']
-    o=Oferta_venta(monto=total,comprador=p,talla=size,articulo= producto)
+    o=Oferta_venta(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
     
     return render(request,"mercado/vendido.html",{
@@ -150,8 +152,8 @@ def vendido(request,producto_id):
 
 def mis_ofertas(request):
     p = User.objects.get(pk=request.user.pk)
-    ofertas_compra = Oferta_compra.objects.filter(comprador=p)
-    ofertas_venta = Oferta_venta.objects.filter(comprador=p)
+    ofertas_compra = Oferta_compra.objects.filter(comprador=p).order_by('-fecha')
+    ofertas_venta = Oferta_venta.objects.filter(comprador=p).order_by('-fecha')
     return render(request, 'mercado/mis_ofertas.html',{
         'ofertas_compra':ofertas_compra,
         'ofertas_venta':ofertas_venta,
