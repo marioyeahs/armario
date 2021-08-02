@@ -42,6 +42,7 @@ class Oferta_compra(models.Model):
     comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    fecha = models.DateTimeField()
     def __str__(self):
         return f"Compra: ${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
 
@@ -50,5 +51,6 @@ class Oferta_venta(models.Model):
     comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    fecha = models.DateTimeField()
     def __str__(self):
         return f"Venta: ${self.monto}.00 mxn en {self.articulo}: {self.comprador}"
