@@ -18,21 +18,4 @@
         {% endfor %}
     </ul>
 
-    <h2>Adidas</h2>
-    <ul>
-        {% for producto in adidas_product %}
-            <li> <a href="{% url 'mercado:detalles' producto.id %}">{{ producto.modelo }}</a> </li>
-        {% empty %}
-            <li>No hay productos de mujer</li>
-        {% endfor %}
-    </ul>
-
-    <h2>Nike</h2>
-    <ul>
-        {% for producto in nike_product %}
-            <li> <a href="{% url 'mercado:detalles' producto.id %}">{{ producto.modelo }}</a> </li>
-        {% empty %}
-            <li>No hay productos de mujer</li>
-        {% endfor %}
-    </ul>
 {% endblock %}
