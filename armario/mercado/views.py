@@ -19,13 +19,13 @@ def fam_member(type,dept):
                 sizes+=[f'{i} cm']
         elif type == 'W':
             for i in range (23,28):
-                sizes+=[f'{i} cm W']
+                sizes+=[f'{i} cm']
         elif type == 'GS':
             for i in range (21,25):
-                sizes+=[f'{i} cm ']
+                sizes+=[f'{i} cm']
         elif type == 'PS':
             for i in range (15,21):
-                sizes+=[f'{i} cm ']
+                sizes+=[f'{i} cm']
     elif dept == 'RP':
         sizes=['XS','S','M','L','XL','XXL']
 
@@ -150,6 +150,7 @@ def vendido(request,producto_id):
         "total":total,
         })
 
+@login_required
 def mis_ofertas(request):
     p = User.objects.get(pk=request.user.pk)
     ofertas_compra = Oferta_compra.objects.filter(comprador=p).order_by('-fecha')
@@ -178,7 +179,6 @@ class MercanciaListView(ListView):
 
 class MarcaListView(ListView):
     model = Marca
-    template_name = 'mercado/mercancia_por_marca.html'
 
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
