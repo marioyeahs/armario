@@ -6,7 +6,7 @@ MARCA {{marca}}
 
 <ul>
     {% for producto in productos %}
-        <li>{{ producto.modelo}}</li>
+        <li> <a href="{% url 'mercado:detalles' producto.id %}">{{producto.modelo}}</a></li>
     {% endfor %}
 </ul>
 
