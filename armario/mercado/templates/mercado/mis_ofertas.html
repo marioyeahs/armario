@@ -8,7 +8,7 @@
 
 <ul>
     {% for oferta in ofertas_compra %}
-        <li><a href="/mercado/{{oferta.articulo.id}}/detalles/">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}}</a></li>
+        <li><a href="/mercado/{{oferta.articulo.id}}/detalles">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}} - {{oferta.fecha.date}}</a></li>
     {% empty %}
         <li>No has realizado ofertas.</li>
     {% endfor %}
@@ -17,7 +17,7 @@
 <h1>Venta:</h1>
 <ul>
     {% for oferta in ofertas_venta %}
-        <li><a href="/mercado/{{oferta.articulo.id}}/detalles/">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}}</a></li>
+        <li><a href="/mercado/{{oferta.articulo.id}}/detalles">$ {{oferta.monto}}.00 mxn - {{oferta.articulo}} - {{oferta.fecha}}</a></li>
         {% empty %}
             <li>No has realizado ofertas.</li>
     {% endfor %}
