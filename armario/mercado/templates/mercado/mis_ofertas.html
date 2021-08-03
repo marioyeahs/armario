@@ -1,5 +1,20 @@
 {% extends "mercado/layout.html" %}
 
+{% block head %}
+
+<script>
+
+    function eliminar() {
+        alert('Eliminar?');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('button').onclick = eliminar;
+    })
+</script>
+
+{% endblock %}
+
 {% block body %}
 
 <h1>Mis ofertas</h1>
@@ -9,6 +24,8 @@
 <ul>
     {% for oferta in ofertas_compra %}
         <li>$ {{oferta.monto}}.00 mxn - <a href="/mercado/{{oferta.articulo.id}}/detalles">{{oferta.articulo}}</a> - {{oferta.fecha.date}}</li>
+        <button><a href="{% url 'mercado:eliminar_compra' oferta.id %}">Eliminar oferta</a></button>
+        
     {% empty %}
         <li>No has realizado ofertas.</li>
     {% endfor %}
@@ -18,6 +35,7 @@
 <ul>
     {% for oferta in ofertas_venta %}
         <li>$ {{oferta.monto}}.00 mxn - <a href="/mercado/{{oferta.articulo.id}}/detalles">{{oferta.articulo}}</a> - {{oferta.fecha}}</li>
+        <a href="{url 'mercado:eliminar' oferta.id}">Eliminar oferta</a>
         {% empty %}
             <li>No has realizado ofertas.</li>
     {% endfor %}
