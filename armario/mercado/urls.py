@@ -15,7 +15,8 @@ urlpatterns = [
     path('registro/', views.register,name='register'),
     path('mis_ofertas/', views.mis_ofertas,name='mis_ofertas'),
     #path('mercancia/<int:pk>', MercanciaDetailView.as_view(),name='mercancia-detail'),
-    path('mercancia/<marca>', MarcaListView.as_view(), name='marca')
+    path('mercancia/<marca>', MarcaListView.as_view(), name='marca'),
+    path('mis_ofertas/<int:oferta_id>', views.eliminar_compra, name='eliminar_compra')
 
     #path('myurl/<int:fish>', views.my_view, {'my_template_name': 'some_path'}, name='aurl'),
 
