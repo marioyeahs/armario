@@ -77,10 +77,10 @@ def detalles(request,producto_id):
 def compra(request, producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     try:
-        talla=request.POST['talla']
+        request.session['talla']=request.POST['talla']
         #comprador
-        monto=int(request.POST['monto'])
-        total=monto+200
+        request.session['monto']=int(request.POST['monto'])
+        request.session['total']=request.session['monto']+200
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -88,13 +88,8 @@ def compra(request, producto_id):
             'error_message':"You didn´t select a Size"
             })
     else:
+        return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
 
-        return render(request,"mercado/compra.html", {
-            'producto':producto,
-            'total':total,
-            'talla':talla,
-            'monto':monto,
-            })
 
 def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
@@ -159,7 +154,12 @@ def mis_ofertas(request):
         'ofertas_compra':ofertas_compra,
         'ofertas_venta':ofertas_venta,
     })
-    
+
+def eliminar_compra(request,oferta_id):
+    oferta = get_object_or_404(Oferta_compra, pk=oferta_id)
+    oferta.delete()
+    return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
+
 
 class MercanciaListView(ListView):
     model = Mercancia
