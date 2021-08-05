@@ -123,7 +123,7 @@ def comprado(request,producto_id):
     today = datetime.today()
     o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=today)
     o.save()
-    
+
     return render(request,"mercado/comprado.html",{
         "producto":producto,
         "talla":size,
@@ -138,7 +138,7 @@ def vendido(request,producto_id):
     size=request.POST['talla']
     o=Oferta_venta(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
-    
+
     return render(request,"mercado/vendido.html",{
         "producto":producto,
         "talla":size,
@@ -150,6 +150,7 @@ def mis_ofertas(request):
     p = User.objects.get(pk=request.user.pk)
     ofertas_compra = Oferta_compra.objects.filter(comprador=p).order_by('-fecha')
     ofertas_venta = Oferta_venta.objects.filter(comprador=p).order_by('-fecha')
+
     return render(request, 'mercado/mis_ofertas.html',{
         'ofertas_compra':ofertas_compra,
         'ofertas_venta':ofertas_venta,
@@ -158,6 +159,13 @@ def mis_ofertas(request):
 def eliminar_compra(request,oferta_id):
     oferta = get_object_or_404(Oferta_compra, pk=oferta_id)
     oferta.delete()
+
+    return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
+
+def eliminar_venta(request,oferta_id):
+    oferta = get_object_or_404(Oferta_venta, pk=oferta_id)
+    oferta.delete()
+
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
 
@@ -174,6 +182,7 @@ class MercanciaListView(ListView):
         context['marcas']=Marca.objects.all()
         context['nike_product'] = Mercancia.objects.filter(marca=1)
         context['adidas_product'] = Mercancia.objects.filter(marca=2)
+
         return context
     
 
@@ -182,6 +191,7 @@ class MarcaListView(ListView):
 
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
+
         return Marca.objects.filter(nombre=self.marca)
 
     def get_context_data(self, **kwargs):
@@ -190,6 +200,7 @@ class MarcaListView(ListView):
         # Add in the publisher
         context['productos'] = Mercancia.objects.filter(marca=self.marca)
         context['marca']=self.marca
+
         return context
 
 
