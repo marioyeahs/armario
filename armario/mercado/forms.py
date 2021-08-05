@@ -1,6 +1,6 @@
 from django import forms
 
-class sizeForm(forms.Form):
+class SizeForm(forms.Form):
     monto = forms.IntegerField()
 
 class RegisterForm(forms.Form):
@@ -8,3 +8,7 @@ class RegisterForm(forms.Form):
     phone = forms.IntegerField()
     email = forms.EmailField(label='E-mail')
     passwd = forms.CharField(max_length=250, widget=forms.PasswordInput)
+
+class BuyingForm(forms.Form):
+    talla = forms.CharField(max_length=5)
+    total = forms.IntegerField()
