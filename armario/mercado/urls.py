@@ -1,12 +1,12 @@
 from django.urls import path
 
 from . import views
-from mercado.views import MercanciaListView, MarcaListView
+from mercado.views import IndexListView, MarcaListView
 
 app_name='mercado'
 urlpatterns = [
     #path('',views.index, name='index'),
-    path('', MercanciaListView.as_view(),name='index'),
+    path('', IndexListView.as_view(),name='index'),
     path('<int:producto_id>/detalles', views.detalles, name='detalles'),
     path('<int:producto_id>/compra', views.compra, name='compra'),
     path('<int:producto_id>/venta', views.venta, name='venta'),
