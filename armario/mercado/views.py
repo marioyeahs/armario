@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from mercado.forms import RegisterForm, 
+from mercado.forms import RegisterForm, BuyingForm
 from django.views import View
 from django.views.generic import ListView, DetailView
 from datetime import datetime
@@ -118,11 +118,13 @@ def detalles(request,producto_id):
 
 def compra(request, producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
+    form = BuyingForm(request.POST)
     try:
-        request.session['talla']=request.POST['talla']
-        #comprador
-        request.session['monto']=int(request.POST['monto'])
-        request.session['total']=request.session['monto']+200
+        if form.is_valid():
+            request.session['talla']=form.cleaned_data['talla']
+            #comprador
+            request.session['monto']=int(form.cleaned_data['monto'])
+            request.session['total']=request.session['monto']+200
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
