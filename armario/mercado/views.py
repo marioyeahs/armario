@@ -51,7 +51,7 @@ class IndexListView(ListView):
 class RegisterFormView(View):
     form_class = RegisterForm
     initial = {'key':'value'}
-    template_name = 'register.html'
+    template_name = 'mercado/register.html'
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
@@ -73,7 +73,6 @@ class RegisterFormView(View):
     
         return render(request,self.template_name, {'form':form})
 
-
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -92,7 +91,6 @@ def register(request):
         form = RegisterForm()
 
     return render(request, 'mercado/register.html',{'form':form})
-
 
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
@@ -118,20 +116,21 @@ def detalles(request,producto_id):
 
 def compra(request, producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    form = BuyingForm(request.POST)
+
     try:
-        if form.is_valid():
-            request.session['talla']=form.cleaned_data['talla']
-            #comprador
-            request.session['monto']=int(form.cleaned_data['monto'])
-            request.session['total']=request.session['monto']+200
+        request.session['talla']=request.POST['talla']
+        request.session['monto']=int(request.POST['monto'])
+        request.session['total']=request.session['monto']+200
+        
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
             'producto':producto,
             'error_message':"You didn´t select a Size"
             })
+
     else:
+
         return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
 
 
