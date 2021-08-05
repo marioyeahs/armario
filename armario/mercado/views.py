@@ -4,7 +4,8 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from mercado.forms import registerForm, sizeForm
+from mercado.forms import RegisterForm, 
+from django.views import View
 from django.views.generic import ListView, DetailView
 from datetime import datetime
 
@@ -47,9 +48,35 @@ class IndexListView(ListView):
 
         return context
 
+class RegisterFormView(View):
+    form_class = RegisterForm
+    initial = {'key':'value'}
+    template_name = 'register.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request,self.template_name, {'form':form})
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            usuario = form.cleaned_data['usuario']
+            email = form.cleaned_data['email']
+            passwd = form.cleaned_data['passwd']
+            phone = form.cleaned_data['phone']
+            new_user = User.objects.create_user(usuario,email,passwd)
+            new_user.save()
+            new_client = Cliente(user=new_user,numero=phone)
+            new_client.save()
+
+            return HttpResponseRedirect(reverse('mercado:index'))
+    
+        return render(request,self.template_name, {'form':form})
+
+
 def register(request):
     if request.method == 'POST':
-        form = registerForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             usuario = form.cleaned_data['usuario']
             email = form.cleaned_data['email']
@@ -62,7 +89,7 @@ def register(request):
 
             return HttpResponseRedirect(reverse('mercado:index'))
     else:
-        form = registerForm()
+        form = RegisterForm()
 
     return render(request, 'mercado/register.html',{'form':form})
 
