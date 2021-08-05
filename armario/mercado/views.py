@@ -31,6 +31,21 @@ def fam_member(type,dept):
 
     return sizes
 
+class IndexListView(ListView):
+    model = Mercancia
+    template_name = "mercado/index.html"
+    # def get_queryset(self):
+    #     return Mercancia.objects.filter(size_type='W')
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(IndexListView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        context['marcas']=Marca.objects.all()
+        context['nike_product'] = Mercancia.objects.filter(marca=1)
+        context['adidas_product'] = Mercancia.objects.filter(marca=2)
+
+        return context
 
 def register(request):
     if request.method == 'POST':
@@ -169,29 +184,10 @@ def eliminar_venta(request,oferta_id):
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
 
-class MercanciaListView(ListView):
-    model = Mercancia
-
-    # def get_queryset(self):
-    #     return Mercancia.objects.filter(size_type='W')
-    
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get the context
-        context = super(MercanciaListView, self).get_context_data(**kwargs)
-        # Create any data and add it to the context
-        context['marcas']=Marca.objects.all()
-        context['nike_product'] = Mercancia.objects.filter(marca=1)
-        context['adidas_product'] = Mercancia.objects.filter(marca=2)
-
-        return context
-    
-
 class MarcaListView(ListView):
     model = Marca
-
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
-
         return Marca.objects.filter(nombre=self.marca)
 
     def get_context_data(self, **kwargs):
@@ -200,6 +196,7 @@ class MarcaListView(ListView):
         # Add in the publisher
         context['productos'] = Mercancia.objects.filter(marca=self.marca)
         context['marca']=self.marca
+        context['marcas']=Marca.objects.all()
 
         return context
 
