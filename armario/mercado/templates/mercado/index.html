@@ -2,14 +2,20 @@
 
 {% block body %}
 
-<h1>ARMARIO</h1>
+    Marcas 
+    <ul>
+        {% for marca in marcas %}
+            <li><a href="{% url 'mercado:marca' marca %}" >{{marca}}</a></li>
+        {% endfor %}
+    </ul>
 
-
-<ul>
-    {% for producto in productos %}
-        <li><a href="{% url 'mercado:detalles' producto.id %}" target="_blank">{{producto.modelo}}</a></li>
-    {% endfor %}
-</ul>
-    
+    <h1>Productos</h1>
+    <ul>
+        {% for producto in mercancia_list %}
+            <li> <a href="{% url 'mercado:detalles' producto.id %}">{{ producto.modelo }}</a> </li>
+        {% empty %}
+            <li>No hay productos de mujer</li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
