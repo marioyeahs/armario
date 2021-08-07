@@ -73,24 +73,7 @@ class RegisterFormView(View):
     
         return render(request,self.template_name, {'form':form})
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            usuario = form.cleaned_data['usuario']
-            email = form.cleaned_data['email']
-            passwd = form.cleaned_data['passwd']
-            phone = form.cleaned_data['phone']
-            new_user = User.objects.create_user(usuario,email,passwd)
-            new_user.save()
-            new_client = Cliente(user=new_user,numero=phone)
-            new_client.save()
 
-            return HttpResponseRedirect(reverse('mercado:index'))
-    else:
-        form = RegisterForm()
-
-    return render(request, 'mercado/register.html',{'form':form})
 
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
