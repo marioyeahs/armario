@@ -211,4 +211,14 @@ class MarcaListView(ListView):
 
         return context
 
+class MasVendidosListView(ListView):
+    template_name = 'mercado/mas_vendidos.html'
+    ofertas=[]
+    for i in Mercancia.objects.all():
+        ofertas+=[Oferta_compra.objects.filter(articulo=i)]
+    
+
+
+    queryset = Mercancia.objects.filter()
+
 
