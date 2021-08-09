@@ -1,0 +1,16 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+<h1>Más vendidos</h1>
+<ul>
+    {% for key, values in x.items %}
+        <li>Key: {{key}}</li>
+        {% for v in values.items %}
+            <li>Value: {{value}}</li>
+        {% endfor %}
+    {% endfor %}
+</ul>
+
+
+{% endblock %}
