@@ -32,6 +32,22 @@ def fam_member(type,dept):
 
     return sizes
 
+def bubble_sort(lst):
+    swap_ocurred = True
+
+    while swap_ocurred:
+        swap_ocurred = False
+
+        for i in range(len(lst)-1):
+
+            if lst[i] > lst[i+1]:
+                temp=lst[i]
+                lst[i]=lst[i+1]
+                lst[i+1]=temp
+                swap_ocurred= True
+    
+    return lst
+
 class IndexListView(ListView):
     model = Mercancia
     template_name = "mercado/index.html"
@@ -74,21 +90,45 @@ class RegisterFormView(View):
         return render(request,self.template_name, {'form':form})
 
 
-
 def detalles(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     tallas = fam_member(producto.size_type,producto.depto)
+    # ofertas_compra=Oferta_compra.objects.filter(articulo=producto)
+    # ofertas_compra_sorted = bubble_sort(ofertas_compra)
+    # ofertas_venta=Oferta_venta.objects.filter(articulo=producto)
+    # ofertas_venta_sorted = bubble_sort(ofertas_venta)
     ofertas_compra=[]
     ofertas_venta=[]
+    ofertas_de_compra=[]
 
-    for i in tallas:
-        ofertas_compra+=[Oferta_compra.objects.filter(articulo=producto,talla=i).last()]
+    #ofertas de compra
+    for talla in tallas:
+        ofertas_compra.append([Ofertas_compra.objects.filter(articulo=producto,talla=talla)])
+            # for oferta in ofertas:
+            #     ofertas_de_compra+=([oferta])
     
-    for i in tallas:
-        ofertas_venta+=[Oferta_venta.objects.filter(articulo=producto,talla=i).last()]
+    print(ofertas_compra)
+    print("****************************************************************")
+    for ofertas in ofertas_compra:
+        for oferta in ofertas:
+            for monto in oferta:
+                print(monto)
+    # print(ofertas_de_compra)
+    
+    
 
-    compras=zip(tallas,ofertas_compra)
-    ventas=zip(tallas,ofertas_venta)
+    # ofertas_compra_sorted=bubble_sort(ofertas_de_compra)
+    # print(ofertas_compra_sorted)
+    
+    # #ofertas de venta
+    # for i in tallas:
+    #     ofertas_venta+=[Oferta_venta.objects.filter(articulo=producto,talla=i).last()]
+    # ofertas_de_venta=[]
+    # for i in ofertas_venta:
+    #     ofertas_de_venta+=[i.monto]
+    # ofertas_venta_sorted=bubble_sort(ofertas_de_compra)
+    compras=zip(tallas,(ofertas_de_compra))
+    ventas=zip(tallas,(ofertas_de_compra))
 
     return render(request,"mercado/detalles.html", {
         'producto':producto,
