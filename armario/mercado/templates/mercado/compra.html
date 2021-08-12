@@ -4,17 +4,16 @@
 
 <h1>Comprando producto: {{producto.modelo}} </h1>
 
-    <p>Marca: {{producto.marca}}</p> 
-    <p>Precio: ${{request.session.monto}}.00 mxn</p>
-    <p>Envío: $200.00 mxn</p>
-    <p>Comisión: $</p>
-
 <form action="{% url 'mercado:comprado' producto.id %}" method="POST">
     {% csrf_token %}
+    <p>Marca: {{producto.marca}}</p> 
     <label for="talla">Talla: {{request.session.talla}}</label>
     <input type="hidden" name="talla" value="{{request.session.talla}}">
     <p></p>
-    <label for="total">Total: ${{request.session.a_pagar}}.00 mxn</label>
+    <p>Oferta: ${{request.session.monto}}.00 mxn</p>
+    <p>+ Envío: $200.00 mxn</p>
+    <p>+ Comisión: 7%</p>
+    <label for="total">Total: ${{request.session.a_pagar}} mxn</label>
     <input type="hidden" name="total" value={{request.session.total}}>
     <p></p>
     <input type="submit" value="Comprar">
