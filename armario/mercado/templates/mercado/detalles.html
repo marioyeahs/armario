@@ -10,12 +10,12 @@
     <h1>Comprar</h1>
     {% for talla,oferta in compras %}
         <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta.monto}} - {{oferta.comprador}}</label><br> 
+        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}} </label><br> 
     {% endfor %}
     <h1>Vender</h1>
     {% for talla,oferta in ventas %}
         <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta.monto}} - {{oferta.comprador}}</label><br> 
+        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}}</label><br> 
     {% endfor %}
     <label>Monto:</label>
     <input type="label" name="monto">
