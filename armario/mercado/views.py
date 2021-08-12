@@ -148,14 +148,14 @@ def venta(request,producto_id):
             'error_message':"You didn´t select a Size"
             })
     else:
-        
+
         return HttpResponseRedirect(reverse('mercado:venta',args=(producto.id,)))
 
 @login_required
 def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    total=request.POST['total']
+    total=int(request.POST['total'])+200
     size=request.POST['talla']
     today = datetime.today()
     o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=today)
