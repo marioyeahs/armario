@@ -1,8 +1,17 @@
 {% extends "mercado/layout.html" %}
 
+{% load static %}
+
+{% block head %}
+<script type="text/javascript" src="{% static 'mercado/js/inputNumber.js' %}"></script>
+{% endblock %}
+
+
 {% block body %}
 
 <h1>{{producto.modelo}}</h1>
+
+<img src="{% static 'mercado/img/' %}{{producto.modelo}}.jpg" alt="{{producto.modelo}}">
 
 <form action="{% url 'mercado:compra' producto.id %}" method="post"> 
     {% csrf_token %}
@@ -18,7 +27,7 @@
         <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}}</label><br> 
     {% endfor %}
     <label>Monto:</label>
-    <input type="label" name="monto">
+    <input id="intTextBox" name="monto">
     </fieldset>
     <input type="submit" value="Comprar"> 
     <input type="submit" value="Vender" formaction="{% url 'mercado:venta' producto.id %}">
