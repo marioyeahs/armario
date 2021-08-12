@@ -121,7 +121,7 @@ def compra(request, producto_id):
         request.session['talla']=request.POST['talla']
         request.session['monto']=int(request.POST['monto'])
         request.session['total']=request.session['monto']
-        request.session['a_pagar']=request.session['total']+200
+        request.session['a_pagar']=request.session['total']+200+.07*request.session['monto']
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -139,11 +139,10 @@ def venta(request,producto_id):
         request.session['talla']=request.POST['talla']
         request.session['monto']=int(request.POST['monto'])
         request.session['total']=request.session['monto']
-        percentage=request.session['monto']*.07
-        request.session['a_pagar']=(request.session['total']-200-percentage)
+        request.session['a_pagar']=(request.session['total']-200-.07*request.session['monto'])
     except(KeyError,producto.DoesNotExist):
 
-        return render(request, "mercado/compra.html",{
+        return render(request, "mercado/venta.html",{
             'producto':producto,
             'error_message':"You didn´t select a Size"
             })
@@ -155,10 +154,9 @@ def venta(request,producto_id):
 def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    total=int(request.POST['total'])+200
+    total=int(request.POST['total'])
     size=request.POST['talla']
-    today = datetime.today()
-    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=today)
+    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
     o.save()
 
     return render(request,"mercado/comprado.html",{
@@ -171,7 +169,7 @@ def comprado(request,producto_id):
 def vendido(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    total=request.POST['total']
+    total=int(request.POST['total'])
     size=request.POST['talla']
     o=Oferta_venta(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
