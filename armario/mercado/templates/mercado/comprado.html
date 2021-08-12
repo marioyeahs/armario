@@ -3,8 +3,8 @@
 {% block body %}
 
 <h1>Gracias x tu compra</h1>
-<p>{{producto.modelo}} es tuyo</p>
+<p><a href="{% url 'mercado:detalles' producto.id %}">{{producto.modelo}}</a> es tuyo</p>
 <p>Talla: {{talla}}</p>
-<p>Total: ${{total}}.00 mxn</p>
+<p>Tu oferta: ${{total}}.00 mxn</p>
 
 {% endblock %}
