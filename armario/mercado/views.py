@@ -120,8 +120,8 @@ def compra(request, producto_id):
     try:
         request.session['talla']=request.POST['talla']
         request.session['monto']=int(request.POST['monto'])
-        request.session['total']=request.session['monto']+200
-        
+        request.session['total']=request.session['monto']
+        request.session['a_pagar']=request.session['total']+200
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -133,15 +133,14 @@ def compra(request, producto_id):
 
         return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
 
-
 def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     try:
-        talla=request.POST['talla']
-        #comprador
-        monto=int(request.POST['monto'])
-        percentage=monto*.07
-        total=int(monto-200-percentage)
+        request.session['talla']=request.POST['talla']
+        request.session['monto']=int(request.POST['monto'])
+        request.session['total']=request.session['monto']
+        percentage=request.session['monto']*.07
+        request.session['a_pagar']=(request.session['total']-200-percentage)
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -149,13 +148,8 @@ def venta(request,producto_id):
             'error_message':"You didn´t select a Size"
             })
     else:
-
-        return render(request,"mercado/venta.html", {
-            'producto':producto,
-            'total':total,
-            'talla':talla,
-            'monto':monto,
-            })
+        
+        return HttpResponseRedirect(reverse('mercado:venta',args=(producto.id,)))
 
 @login_required
 def comprado(request,producto_id):
