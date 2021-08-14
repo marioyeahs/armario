@@ -13,24 +13,27 @@
 
 <img src="{% static 'mercado/img/' %}{{producto.modelo}}.jpg" alt="{{producto.modelo}}">
 
-<form action="{% url 'mercado:compra' producto.id %}" method="post"> 
+<form action="{% url 'mercado:compra' producto.id %}" method="POST"> 
     {% csrf_token %}
     <fieldset>
     <h1>Comprar</h1>
     {% for talla,oferta in compras %}
-        <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}} </label><br> 
+        <br><input type="radio" name="talla"  value="{{ talla }}">
+        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}} </label>
+        <input name="comprar_ahora" type="submit" value={{oferta}} formaction="{% url 'mercado:compra' producto.id %}">
     {% endfor %}
     <h1>Vender</h1>
     {% for talla,oferta in ventas %}
-        <input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}}</label><br> 
+        <br><input type="radio" name="talla" id="talla{{ forloop.counter }}" value="{{ talla }}">
+        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}}</label>
+        <input name="vender_ahora" type="submit"  value={{oferta}} formaction="{% url 'mercado:venta' producto.id %}">
     {% endfor %}
+    <hr>
     <label>Monto:</label>
-    <input id="intTextBox" name="monto">
+    <input id="intTextBox" name="monto" type="text">
     </fieldset>
-    <input type="submit" value="Comprar"> 
-    <input type="submit" value="Vender" formaction="{% url 'mercado:venta' producto.id %}">
+    <input type="submit" value="Oferta de compra"> 
+    <input type="submit" value="Oferta de venta" formaction="{% url 'mercado:venta' producto.id %}">
 </form>
 
 {% endblock %}
