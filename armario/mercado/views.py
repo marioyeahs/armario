@@ -119,9 +119,17 @@ def compra(request, producto_id):
 
     try:
         request.session['talla']=request.POST['talla']
-        request.session['monto']=int(request.POST['monto'])
-        request.session['total']=request.session['monto']
-        request.session['a_pagar']=request.session['total']+200+.07*request.session['monto']
+        
+        if request.POST['monto']:
+            request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
+            print('**********Comprar ahora************')
+            print(request.session['monto'])
+            request.session['total']=request.session['monto']+200+.07*request.session['monto']
+        else:
+            request.session['monto']=request.session['comprar_ahora']=int(request.POST['comprar_ahora'])
+            print('-----------Oferta compra----------------')
+            print(request.session['monto'])
+            request.session['total']=request.session['comprar_ahora']+200+.07*request.session['comprar_ahora']
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -137,9 +145,16 @@ def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     try:
         request.session['talla']=request.POST['talla']
-        request.session['monto']=int(request.POST['monto'])
-        request.session['total']=request.session['monto']
-        request.session['a_pagar']=(request.session['total']-200-.07*request.session['monto'])
+        if request.POST['monto']:
+            request.session['monto']=request.session['vender_ahora']=int(request.POST['monto'])
+            print('**********Vender ahora************')
+            print(request.session['monto'])
+            request.session['total']=request.session['monto']-200-.07*request.session['monto']
+        else:
+            request.session['monto']=request.session['vender_ahora']=int(request.POST['vender_ahora'])
+            print('-----------Oferta compra----------------')
+            print(request.session['monto'])
+            request.session['total']=request.session['vender_ahora']-200-.07*request.session['vender_ahora']
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/venta.html",{
@@ -154,30 +169,36 @@ def venta(request,producto_id):
 def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    total=int(request.POST['total'])
+    if request.POST['monto']:
+        monto=int(request.POST['monto'])
+    else:
+        monto=int(request.POST['comprar_ahora'])
     size=request.POST['talla']
-    o=Oferta_compra(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
+    o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
     o.save()
 
     return render(request,"mercado/comprado.html",{
         "producto":producto,
         "talla":size,
-        "total":total,
+        "monto":monto,
         })
 
 @login_required
 def vendido(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    total=int(request.POST['total'])
+    if request.POST['monto']:
+        monto=int(request.POST['monto'])
+    else:
+        monto=int(request.POST['comprar_ahora'])
     size=request.POST['talla']
-    o=Oferta_venta(monto=total,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
+    o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
 
     return render(request,"mercado/vendido.html",{
         "producto":producto,
         "talla":size,
-        "total":total,
+        "monto":monto,
         })
 
 @login_required
