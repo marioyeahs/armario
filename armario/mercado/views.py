@@ -169,10 +169,9 @@ def venta(request,producto_id):
 def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    if request.POST['monto']:
-        monto=int(request.POST['monto'])
-    else:
-        monto=int(request.POST['comprar_ahora'])
+    
+    monto=int(request.POST['monto'])
+
     size=request.POST['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
     o.save()
@@ -187,10 +186,9 @@ def comprado(request,producto_id):
 def vendido(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    if request.POST['monto']:
-        monto=int(request.POST['monto'])
-    else:
-        monto=int(request.POST['comprar_ahora'])
+
+    monto=int(request.POST['monto'])
+    
     size=request.POST['talla']
     o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
