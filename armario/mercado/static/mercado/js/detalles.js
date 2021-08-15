@@ -29,15 +29,25 @@ document.addEventListener("DOMContentLoaded", function(){
     const submit_oferta_compra = document.getElementById('oferta_compra');
     const submit_oferta_venta = document.getElementById('oferta_venta');
     const monto = document.getElementById('intTextBox')
-    const boton_compra = document.getElementsByClassName('ahora')
+    const boton_compra = document.getElementsByClassName('comprar_ahora')
+    const boton_venta = document.getElementsByClassName('vender_ahora')
     const tallas = document.getElementsByClassName('tallas')
-    
+    const test = document.getElementById('check_test')
+
     for(let i = 0;i<boton_compra.length;i++){
         boton_compra[i].disabled=true;
+        boton_venta[i].disabled=true;
     }
     
     submit_oferta_venta.disabled=true;
     submit_oferta_compra.disabled=true;
+
+    document.querySelectorAll("input[type=radio]").forEach(function(radio){
+        radio.change = function(){
+            boton_compra[(radio.id)-1].disabled=false;
+        }
+    })
+    
     monto.onkeyup = () => {
         if (monto.value.length > 0){
             submit_oferta_venta.disabled=false;
