@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function(){
     submit_oferta_compra.disabled=true;
 
     const radios = document.querySelectorAll("input[type=radio]");
-    const submits = document.querySelectorAll("input[type=submit]");
+    const submits = document.querySelectorAll("button");
     radios.forEach(function(radio){
         radio.onclick = function() {
             for(let i = 0;i<boton_compra.length;i++){
