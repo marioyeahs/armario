@@ -32,6 +32,21 @@ document.addEventListener("DOMContentLoaded", function(){
     const boton_compra = document.getElementsByClassName('ahora')
     const tallas = document.getElementsByClassName('tallas')
     
+    for(let i = 0;i<boton_compra.length;i++){
+        boton_compra[i].disabled=true;
+    }
+    
+    submit_oferta_venta.disabled=true;
+    submit_oferta_compra.disabled=true;
+    monto.onkeyup = () => {
+        if (monto.value.length > 0){
+            submit_oferta_venta.disabled=false;
+            submit_oferta_compra.disabled=false;
+        }else{
+            submit_oferta_venta.disabled=true;
+            submit_oferta_compra.disabled=true;
+        }
+    }
 
     // Install input filters.
     setInputFilter(document.getElementById("intTextBox"), function (value) {
