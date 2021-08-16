@@ -18,19 +18,20 @@
     <fieldset>
     <h1>Comprar</h1>
     {% for talla,oferta in compras %}
-        <br><input type="radio" name="talla" class="tallas"  value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}} </label>
+        <br><input type="radio" name="talla" class="tallas"  value="{{ talla }}" checked="checked">
+        <label for="talla{{ forloop.counter }}">{{ talla }} - $ <span>{{oferta}}</span>  </label>
         <button name="comprar_ahora" class="comprar_ahora" value={{oferta}} formaction="{% url 'mercado:compra' producto.id %}">Comprar ahora</button>
     {% endfor %}
     <h1>Vender</h1>
     {% for talla,oferta in ventas %}
         <br><input type="radio" name="talla" class="tallas" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - ${{oferta}}</label>
+        <label for="talla{{ forloop.counter }}">{{ talla }} - $ <span>{{oferta}}</span></label>
         <button name="vender_ahora" class="vender_ahora" value={{oferta}} formaction="{% url 'mercado:venta' producto.id %}">Vender ahora</button>
     {% endfor %}
     <hr>
     <label>Monto:</label>
     <input id="intTextBox" name="monto" type="text">
+    <p id="posicion">Tu oferta:</p>
     </fieldset>
     <input type="submit" id="oferta_compra" value="Oferta de compra"> 
     <input type="submit" id="oferta_venta" value="Oferta de venta" formaction="{% url 'mercado:venta' producto.id %}">
