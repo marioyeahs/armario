@@ -122,14 +122,17 @@ def compra(request, producto_id):
         
         if request.POST['monto']:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
-            print('**********Comprar ahora************')
+            print('**********Oferta compra************')
             print(request.session['monto'])
             request.session['total']=request.session['monto']+200+.07*request.session['monto']
         else:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['comprar_ahora'])
-            print('-----------Oferta compra----------------')
+            print('-----------Comprar ahora----------------')
             print(request.session['monto'])
             request.session['total']=request.session['comprar_ahora']+200+.07*request.session['comprar_ahora']
+
+            return HttpResponseRedirect(reverse('mercado:oferta_compra',args=(producto.id,)))
+
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
@@ -147,14 +150,17 @@ def venta(request,producto_id):
         request.session['talla']=request.POST['talla']
         if request.POST['monto']:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['monto'])
-            print('**********Vender ahora************')
+            print('**********Oferta venta************')
             print(request.session['monto'])
             request.session['total']=request.session['monto']-200-.07*request.session['monto']
         else:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['vender_ahora'])
-            print('-----------Oferta compra----------------')
+            print('-----------Vender ahora----------------')
             print(request.session['monto'])
             request.session['total']=request.session['vender_ahora']-200-.07*request.session['vender_ahora']
+
+            return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(producto.id,)))
+
     except(KeyError,producto.DoesNotExist):
 
         return render(request, "mercado/venta.html",{
@@ -164,6 +170,47 @@ def venta(request,producto_id):
     else:
 
         return HttpResponseRedirect(reverse('mercado:venta',args=(producto.id,)))
+
+def oferta_compra(request,producto_id):
+    producto = Mercancia.objects.get(id=producto_id)
+    return render(request,"mercado/oferta_compra.html",{"producto":producto})
+
+def oferta_venta(request,producto_id):
+    producto = Mercancia.objects.get(id=producto_id)
+    return render(request,"mercado/oferta_venta.html",{"producto":producto})
+
+@login_required
+def oferta_comprada(request,producto_id):
+    producto = get_object_or_404(Mercancia, pk=producto_id)
+    monto=int(request.POST['monto'])
+    size=request.POST['talla']
+    o=Oferta_venta.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
+    # o.comprador = send_email()
+    # Ofertas_compradas+=o 
+    o.delete()
+    return render(request,"mercado/oferta_comprada.html",{
+        'usuario':request.user.username,
+        'producto':producto,
+        'monto':monto,
+        'talla':size,
+    })
+
+@login_required
+def oferta_vendida(request,producto_id):
+    producto = get_object_or_404(Mercancia, pk=producto_id)
+    monto=int(request.POST['monto'])
+    size=request.POST['talla']
+    o=Oferta_compra.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
+    # o.comprador = send_email()
+    # Ofertas_compradas+=o 
+    o.delete()
+    return render(request,"mercado/oferta_vendida.html",{
+        'usuario':request.user.username,
+        'producto':producto,
+        'monto':monto,
+        'talla':size,
+    })
+
 
 @login_required
 def comprado(request,producto_id):
