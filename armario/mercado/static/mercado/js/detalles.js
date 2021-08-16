@@ -1,13 +1,6 @@
 function setInputFilter(textbox, inputFilter) {
 [
-    "input",
-    "keydown",
-    "keyup",
-    "mousedown",
-    "mouseup",
-    "select",
-    "contextmenu",
-    "drop",
+    "input","keydown","keyup","mousedown","mouseup","select","contextmenu","drop",
 ].forEach(function (event) {
     textbox.addEventListener(event, function () {
     if (inputFilter(this.value)) {
@@ -34,6 +27,14 @@ document.addEventListener("DOMContentLoaded", function(){
     const radios = document.querySelectorAll("input[type=radio]");
     const submits = document.querySelectorAll("button");
 
+    document.querySelectorAll('span').forEach(function(price){
+        document.body.onload = function(){
+            if(price.innerHTML==="None"){
+                price.innerHTML="Sold out!"
+            }
+        }
+    });
+
     submit_oferta_venta.disabled=true;
     submit_oferta_compra.disabled=true;
 
@@ -54,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function(){
             }else{
                 submits[index].disabled = false;
             }
-            
         }
     });
     
