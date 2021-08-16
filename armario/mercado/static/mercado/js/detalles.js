@@ -31,19 +31,17 @@ document.addEventListener("DOMContentLoaded", function(){
     const monto = document.getElementById('intTextBox')
     const boton_compra = document.getElementsByClassName('comprar_ahora')
     const boton_venta = document.getElementsByClassName('vender_ahora')
-    const tallas = document.getElementsByClassName('tallas')
-    const test = document.getElementById('check_test')
+    const radios = document.querySelectorAll("input[type=radio]");
+    const submits = document.querySelectorAll("button");
+
+    submit_oferta_venta.disabled=true;
+    submit_oferta_compra.disabled=true;
 
     for(let i = 0;i<boton_compra.length;i++){
         boton_compra[i].disabled=true;
         boton_venta[i].disabled=true;
     }
-    
-    submit_oferta_venta.disabled=true;
-    submit_oferta_compra.disabled=true;
 
-    const radios = document.querySelectorAll("input[type=radio]");
-    const submits = document.querySelectorAll("button");
     radios.forEach(function(radio){
         radio.onclick = function() {
             for(let i = 0;i<boton_compra.length;i++){
@@ -51,7 +49,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 boton_venta[i].disabled=true;
             }
             index = Array.prototype.indexOf.call(radios,radio);
-            submits[index].disabled = false;
+            if(submits[index].value === 'None'){
+                submits[index].disabled = true;
+            }else{
+                submits[index].disabled = false;
+            }
+            
         }
     });
     
