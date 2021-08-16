@@ -1,19 +1,9 @@
 {% extends "mercado/layout.html" %}
 
+{% load static %}
+
 {% block head %}
-
-<script>
-
-    function eliminar() {
-        alert('Eliminar?');
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelector('#eliminar_compra').onclick = eliminar;
-        document.querySelector('#eliminar_venta').onclick = eliminar;
-    })
-</script>
-
+<script type="text/javascript" src="{% static 'mercado/js/eliminar_oferta.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -25,7 +15,7 @@
 <ul>
     {% for oferta in ofertas_compra %}
         <li>$ {{oferta.monto}}.00 mxn - <a href="/mercado/{{oferta.articulo.id}}/detalles">{{oferta.articulo}}</a> - {{oferta.fecha.date}}</li>
-        <button id="eliminar_compra"><a href="{% url 'mercado:eliminar_compra' oferta.id %}">Eliminar oferta</a></button>
+        <button class="eliminar_compra"><a href="{% url 'mercado:eliminar_compra' oferta.id %}">Eliminar oferta</a></button>
         
     {% empty %}
         <li>No has realizado ofertas.</li>
@@ -36,7 +26,7 @@
 <ul>
     {% for oferta in ofertas_venta %}
         <li>$ {{oferta.monto}}.00 mxn - <a href="{% url 'mercado:detalles' oferta.articulo.id %}" target="_blank">{{oferta.articulo}}</a> - {{oferta.fecha}}</li>
-        <button id="eliminar_venta"><a href="{% url 'mercado:eliminar_venta' oferta.id %}">Eliminar oferta</a></button>
+        <button class="eliminar_venta"><a href="{% url 'mercado:eliminar_venta' oferta.id %}">Eliminar oferta</a></button>
         {% empty %}
             <li>No has realizado ofertas.</li>
     {% endfor %}
