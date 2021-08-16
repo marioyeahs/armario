@@ -10,7 +10,7 @@ from django.views.generic import ListView, DetailView
 from datetime import datetime
 
 # Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta
+from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas
 
 def fam_member(type,dept):
     sizes = []
@@ -186,7 +186,7 @@ def oferta_comprada(request,producto_id):
     size=request.POST['talla']
     o=Oferta_venta.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
     # o.comprador = send_email()
-    # Ofertas_compradas+=o 
+    Ofertas_compradas.objects.create(monto=monto,comprador=request.user, talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_comprada.html",{
         'usuario':request.user.username,
