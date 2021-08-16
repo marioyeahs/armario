@@ -54,3 +54,12 @@ class Oferta_venta(models.Model):
     fecha = models.DateTimeField()
     def __str__(self):
         return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
+
+class Ofertas_compradas(models.Model):
+    monto = models.IntegerField()
+    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
+    talla = models.CharField(max_length=5, null=True,blank=True)
+    articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    fecha = models.DateTimeField()
+    def __str__(self):
+        return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
