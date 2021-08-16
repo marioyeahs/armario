@@ -1,0 +1,24 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+<h1>Estás por aceptar la oferta en {{producto.modelo}}</h1>
+
+<form action="{% url 'mercado:oferta_vendida' producto.id %}" method="POST">
+    {% csrf_token %}
+    <p>Marca: {{producto.marca}}</p> 
+    <label for="talla">Talla: {{request.session.talla}}</label>
+    <input type="hidden" name="talla" value="{{request.session.talla}}">
+    <p></p>
+
+    <p>Tu oferta: {{request.session.monto}}
+    <input type="hidden" name="monto" value={{request.session.monto}}>
+    <p>- Envío: $200.00 mxn</p>
+    <p>- Comisión: -7%</p>
+    <label for="total">Total: ${{request.session.total}} mxn</label>
+    <input type="hidden" name="total" value={{request.session.total}}>
+    <p></p>
+    <input type="submit" value="Vender">
+</form>
+
+{% endblock %}
