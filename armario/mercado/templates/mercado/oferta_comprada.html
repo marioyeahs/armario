@@ -1,0 +1,11 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+<h1>Gracias x confiar en nosotros, tu compra está completamente segura</h1>
+
+<p><a href="{% url 'mercado:detalles' producto.id %}">{{producto.modelo}}</a> es tuyo</p>
+<p>Talla: {{talla}}</p>
+<p>Tu oferta: ${{monto}}.00 mxn</p>
+
+{% endblock %}
