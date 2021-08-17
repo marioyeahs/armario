@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", function(){
     const radios = document.querySelectorAll("input[type=radio]");
     const submits = document.querySelectorAll("button");
 
+    monto.value='';
+
     document.querySelectorAll('span').forEach(function(price){
         document.body.onload = function(){
             if(price.innerHTML==="None"){
@@ -45,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     radios.forEach(function(radio){
         radio.onclick = function() {
+            monto.value='';
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
                 boton_venta[i].disabled=true;
@@ -54,16 +57,17 @@ document.addEventListener("DOMContentLoaded", function(){
                 submits[index].disabled = true;
             }else{
                 submits[index].disabled = false;
+                
             }
         }
     });
     
     monto.onkeyup = () => {
-        for(let i = 0;i<boton_compra.length;i++){
-            boton_compra[i].disabled=true;
-            boton_venta[i].disabled=true;
-        }
         if (monto.value.length > 0){
+            for(let i = 0;i<boton_compra.length;i++){
+                boton_compra[i].disabled=true;
+                boton_venta[i].disabled=true;
+            }
             submit_oferta_venta.disabled=false;
             submit_oferta_compra.disabled=false;
         }else{
