@@ -96,16 +96,14 @@ def detalles(request,producto_id):
     ofertas_compra=[]
     ofertas_venta=[]
 
-    #ofertas de compra
     for talla in tallas:
         ofertas_compra+=[Oferta_compra.objects.filter(articulo=producto,talla=talla).values_list('monto',flat=True).order_by('monto').last()]
-    
 
     for talla in tallas:
         ofertas_venta+=[Oferta_venta.objects.filter(articulo=producto,talla=talla).values_list('monto',flat=True).order_by('monto').first()]
     
-    compras=zip(tallas,ofertas_venta)
-    ventas=zip(tallas,ofertas_compra)
+    compras=zip(tallas,ofertas_venta,ofertas_compra)
+    ventas=zip(tallas,ofertas_compra, ofertas_venta)
 
     return render(request,"mercado/detalles.html", {
         'producto':producto,
