@@ -17,16 +17,16 @@
     {% csrf_token %}
     <fieldset>
     <h1>Comprar</h1>
-    {% for talla,oferta in compras %}
+    {% for talla,oferta,min in compras %}
         <br><input type="radio" name="talla" class="tallas"  value="{{ talla }}" checked="checked">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - $ <span>{{oferta}}</span>  </label>
-        <button name="comprar_ahora" class="comprar_ahora" value={{oferta}} formaction="{% url 'mercado:compra' producto.id %}">Comprar ahora</button>
+        <label for="talla{{ forloop.counter }}">{{ talla }} - Oferta de compra mas alta $ {{min}} </label>
+        <button name="comprar_ahora" class="comprar_ahora" value={{oferta}} formaction="{% url 'mercado:compra' producto.id %}">Comprar ahora $ {{oferta}}</button>
     {% endfor %}
     <h1>Vender</h1>
-    {% for talla,oferta in ventas %}
+    {% for talla,oferta,max in ventas %}
         <br><input type="radio" name="talla" class="tallas" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - $ <span>{{oferta}}</span></label>
-        <button name="vender_ahora" class="vender_ahora" value={{oferta}} formaction="{% url 'mercado:venta' producto.id %}">Vender ahora</button>
+        <label for="talla{{ forloop.counter }}">{{ talla }} - Oferta de venta mas baja $ {{max}} </label>
+        <button name="vender_ahora" class="vender_ahora" value={{oferta}} formaction="{% url 'mercado:venta' producto.id %}">Vender ahora $ {{oferta}}</button>
     {% endfor %}
     <hr>
     <label>Monto:</label>
