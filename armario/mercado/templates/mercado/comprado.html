@@ -2,8 +2,8 @@
 
 {% block body %}
 
-<h1>Gracias x tu compra</h1>
-<p><a href="{% url 'mercado:detalles' producto.id %}">{{producto.modelo}}</a> es tuyo</p>
+<h1>Gracias, hemos enviado tu oferta a los vendedores</h1>
+<p>Producto:<a href="{% url 'mercado:detalles' producto.id %}">{{producto.modelo}}</a></p>
 <p>Talla: {{talla}}</p>
 <p>Tu oferta: ${{monto}}.00 mxn</p>
 
