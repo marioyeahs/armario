@@ -1,3 +1,4 @@
+from django.core.mail import send_mail, send_mass_mail
 from django.http.response import HttpResponse
 from django.http import Http404,HttpResponseRedirect
 from django.urls import reverse
@@ -122,12 +123,14 @@ def compra(request, producto_id):
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
             print('**********Oferta compra************')
             print(request.session['monto'])
-            request.session['total']=request.session['monto']+200+.07*request.session['monto']
+            request.session['comision'] = round(.07*request.session['monto'],2)
+            request.session['total']=request.session['monto']+200+request.session['comision']
         else:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['comprar_ahora'])
             print('-----------Comprar ahora----------------')
             print(request.session['monto'])
-            request.session['total']=request.session['comprar_ahora']+200+.07*request.session['comprar_ahora']
+            request.session['comision'] = round(.07*request.session['monto'],2)
+            request.session['total']=request.session['comprar_ahora']+200+request.session['comision']
 
             return HttpResponseRedirect(reverse('mercado:oferta_compra',args=(producto.id,)))
 
@@ -150,12 +153,14 @@ def venta(request,producto_id):
             request.session['monto']=request.session['vender_ahora']=int(request.POST['monto'])
             print('**********Oferta venta************')
             print(request.session['monto'])
-            request.session['total']=request.session['monto']-200-.07*request.session['monto']
+            request.session['comision']=.07*request.session['monto']
+            request.session['total']=request.session['monto']-200-request.session['comision']
         else:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['vender_ahora'])
             print('-----------Vender ahora----------------')
             print(request.session['monto'])
-            request.session['total']=request.session['vender_ahora']-200-.07*request.session['vender_ahora']
+            request.session['comision']=.07*request.session['monto']
+            request.session['total']=request.session['vender_ahora']-200-request.session['comision']
 
             return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(producto.id,)))
 
@@ -199,8 +204,26 @@ def oferta_vendida(request,producto_id):
     monto=int(request.POST['monto'])
     size=request.POST['talla']
     o=Oferta_compra.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
-    # o.comprador = send_email()
-    # Ofertas_compradas+=o 
+
+    #send_email(vendedor)
+    #(subject, message, from_email, recipient_list)
+    message1=('Felicidades, has vendido {{producto}}',
+    "Enhorabuena, por favor envíanos tu producto en su caja original",
+    # DEFAULT_FROM_EMAIL setting.,
+    'webmaster@localhost',
+    [request.user.email])
+
+    #send_email(comprador)
+    #(subject, message, from_email, recipient_list)
+    message2=('Se ha aceptado tu oferta!', 
+    'Felicidades, tu producto llegará en los próximos días hábiles',
+    # DEFAULT_FROM_EMAIL setting.,
+    'webmaster@localhost',
+    [o.comprador.email])
+    
+    send_mass_mail((message1,message2), fail_silently=False)
+    monto=monto+200+.07*monto
+    Ofertas_compradas.objects.create(monto=monto,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
         'usuario':request.user.username,
