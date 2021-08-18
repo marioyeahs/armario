@@ -57,9 +57,10 @@ class Oferta_venta(models.Model):
 
 class Ofertas_compradas(models.Model):
     monto = models.IntegerField()
-    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
+    comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comprador')
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
+        return f"${self.monto}.00 mxn en {self.articulo.modelo} - De:{self.comprador} | Para:{self.comprador}"
