@@ -188,9 +188,24 @@ def oferta_comprada(request,producto_id):
     monto=int(request.POST['monto'])
     size=request.POST['talla']
     o=Oferta_venta.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
-    # o.comprador = send_email()
-    Ofertas_compradas.objects.create(monto=monto,comprador=request.user, talla=size, articulo=producto,fecha=datetime.today())
+
+    message1=('Felicidades, has vendido {{producto}}',
+    "Enhorabuena, por favor envíanos tu producto en su caja original",
+    # DEFAULT_FROM_EMAIL setting.,
+    'webmaster@localhost',
+    [request.user.email])
+    message2=('Se ha aceptado tu oferta!', 
+    'Felicidades, tu producto llegará en los próximos días hábiles',
+    # DEFAULT_FROM_EMAIL setting.,
+    'webmaster@localhost',
+    [o.comprador.email])
+    send_mass_mail((message1,message2), fail_silently=False)
+
+    comision = .07*monto
+    monto=monto+200+comision
+    Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
+
     return render(request,"mercado/oferta_comprada.html",{
         'usuario':request.user.username,
         'producto':producto,
@@ -205,25 +220,19 @@ def oferta_vendida(request,producto_id):
     size=request.POST['talla']
     o=Oferta_compra.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
 
-    #send_email(vendedor)
-    #(subject, message, from_email, recipient_list)
     message1=('Felicidades, has vendido {{producto}}',
     "Enhorabuena, por favor envíanos tu producto en su caja original",
-    # DEFAULT_FROM_EMAIL setting.,
     'webmaster@localhost',
     [request.user.email])
-
-    #send_email(comprador)
-    #(subject, message, from_email, recipient_list)
     message2=('Se ha aceptado tu oferta!', 
     'Felicidades, tu producto llegará en los próximos días hábiles',
-    # DEFAULT_FROM_EMAIL setting.,
     'webmaster@localhost',
     [o.comprador.email])
-    
     send_mass_mail((message1,message2), fail_silently=False)
-    monto=monto+200+.07*monto
-    Ofertas_compradas.objects.create(monto=monto,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
+
+    comision = .07*monto
+    monto=monto+200+comision
+    Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
         'usuario':request.user.username,
@@ -232,18 +241,17 @@ def oferta_vendida(request,producto_id):
         'talla':size,
     })
 
-
+#buy offer successful
 @login_required
 def comprado(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    
     monto=int(request.POST['monto'])
-
     size=request.POST['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
+    
     o.save()
-
+    
     return render(request,"mercado/comprado.html",{
         "producto":producto,
         "talla":size,
@@ -254,9 +262,7 @@ def comprado(request,producto_id):
 def vendido(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-
     monto=int(request.POST['monto'])
-    
     size=request.POST['talla']
     o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
     o.save()
