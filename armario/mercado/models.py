@@ -57,6 +57,8 @@ class Oferta_venta(models.Model):
 
 class Ofertas_compradas(models.Model):
     monto = models.IntegerField()
+    comision_comprador = models.FloatField()
+    comision_vendedor = models.FloatField()
     comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comprador')
     vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
