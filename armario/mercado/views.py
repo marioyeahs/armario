@@ -289,6 +289,34 @@ def vendido(request,producto_id):
     monto=int(request.POST['monto'])
     size=request.POST['talla']
     o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
+
+    users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
+    emails=[]
+    for i in users:
+        emails.append(i.comprador.email)
+    message1=('Tu oferta de venta está activa',
+    'En este momento tu oferta ha sido activada',
+    'armario@armario.com',
+    [request.user.email])
+    oferta_mayor=Oferta_venta.objects.filter(talla=size,articulo=producto).order_by('monto').first()
+    try:
+        oferta_mayor=oferta_mayor.monto
+    except AttributeError:
+        oferta_mayor=0
+    if(o.monto < oferta_mayor):
+        message2=('Una oferta menor ha sido colocada',
+                    'Alguien ha superado tu oferta, que no te lo ganen!',
+                    'armario@armario.com',
+                    emails
+                    )
+        send_mass_mail((message1,message2),fail_silently=False)
+    else:
+        send_mail('Tu oferta de venta está activa',
+    'En este momento tu oferta ha sido activada',
+    'armario@armario.com',
+    [request.user.email]
+    , fail_silently=False)
+
     o.save()
 
     return render(request,"mercado/vendido.html",{
