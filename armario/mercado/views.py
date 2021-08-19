@@ -249,7 +249,31 @@ def comprado(request,producto_id):
     monto=int(request.POST['monto'])
     size=request.POST['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
-    
+    users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
+    emails=[]
+    for i in users:
+        emails.append(i.comprador.email)
+    message1=('Tu oferta de compra está activa',
+    'En este momento tu oferta ha sido activada',
+    'armario@armario.com',
+    [request.user.email])
+
+    oferta_mayor=Oferta_compra.objects.filter(talla=size,articulo=producto).order_by('monto').last()
+    if(o.monto > oferta_mayor.monto):
+        print("oferta mayor")
+        message2=('Una oferta mayor ha sido colocada',
+                    'Alguien ha superado tu oferta, que no te lo ganen!',
+                    'armario@armario.com',
+                    emails
+                    )
+        send_mass_mail((message1,message2),fail_silently=False)
+    else:
+        send_mail('Tu oferta de compra está activa',
+    'En este momento tu oferta ha sido activada',
+    'armario@armario.com',
+    [request.user.email]
+    , fail_silently=False)
+
     o.save()
     
     return render(request,"mercado/comprado.html",{
