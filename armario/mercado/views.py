@@ -259,7 +259,11 @@ def comprado(request,producto_id):
     [request.user.email])
 
     oferta_mayor=Oferta_compra.objects.filter(talla=size,articulo=producto).order_by('monto').last()
-    if(o.monto > oferta_mayor.monto):
+    try:
+        oferta_mayor=oferta_mayor.monto
+    except AttributeError:
+        oferta_mayor=0
+    if(o.monto > oferta_mayor):
         print("oferta mayor")
         message2=('Una oferta mayor ha sido colocada',
                     'Alguien ha superado tu oferta, que no te lo ganen!',
