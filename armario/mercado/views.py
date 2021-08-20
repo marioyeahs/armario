@@ -118,6 +118,9 @@ def compra(request, producto_id):
 
     try:
         request.session['talla']=request.POST['talla']
+        if(Oferta_compra.objects.filter(comprador=request.user,talla=request.POST['talla'],articulo=producto)):
+            print("Ya hay oferta en este articulo")
+
         
         if request.POST['monto']:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
@@ -340,12 +343,14 @@ def mis_ofertas(request):
         'ofertas_venta':ofertas_venta,
     })
 
+@login_required
 def eliminar_compra(request,oferta_id):
     oferta = get_object_or_404(Oferta_compra, pk=oferta_id)
     oferta.delete()
 
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
+@login_required
 def eliminar_venta(request,oferta_id):
     oferta = get_object_or_404(Oferta_venta, pk=oferta_id)
     oferta.delete()
