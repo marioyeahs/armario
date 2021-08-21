@@ -45,6 +45,12 @@ class Oferta_compra(models.Model):
     fecha = models.DateTimeField()
     def __str__(self):
         return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
+    
+    def oferta_mayor_envio(self):
+        """verify if the offer is greater than the deilvery cost"""
+        return self.monto > 200
+
+
 
 class Oferta_venta(models.Model):
     monto = models.IntegerField()
