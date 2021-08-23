@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -134,5 +137,19 @@ LOGIN_REDIRECT_URL = '/mercado'
 
 #Email support  in console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+sentry_sdk.init(
+    dsn="https://de8a404946744efdbe42b045fc05d5c4@o969772.ingest.sentry.io/5920910",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 
 
