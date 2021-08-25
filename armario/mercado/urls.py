@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 
 from . import views
-from mercado.views import IndexListView, MarcaListView, RegisterFormView, MasVendidosListView
+from mercado.views import IndexListView, MarcaListView, RegisterFormView, MasVendidosListView, MercanciaDetailView
 
 app_name='mercado'
 urlpatterns = [
@@ -15,7 +15,7 @@ urlpatterns = [
     path('<int:producto_id>/vendido', views.vendido,name='vendido'),
     path('registro/', RegisterFormView.as_view(),name='register'),
     path('mis_ofertas/', views.mis_ofertas,name='mis_ofertas'),
-    #path('mercancia/<int:pk>', MercanciaDetailView.as_view(),name='mercancia-detail'),
+    path('mercancia/<int:pk>', MercanciaDetailView.as_view(),name='mercancia-detail'),
     path('mercancia/<marca>', MarcaListView.as_view(), name='marca'),
     path('mis_ofertas/<int:oferta_id>/eliminar_venta', views.eliminar_venta, name='eliminar_venta'),
     path('mis_ofertas/<int:oferta_id>/eliminar_compra', views.eliminar_compra, name='eliminar_compra'),
