@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from mercado.forms import RegisterForm, BuyingForm
+from mercado.forms import RegisterForm
 from django.views import View
 from django.views.generic import ListView, DetailView
 from datetime import datetime
@@ -394,5 +394,9 @@ class MasVendidosListView(ListView):
         context['ofertas']=self.ofertas
 
         return context
+
+class MercanciaDetailView(DetailView):
+    model = Mercancia
+
 
 
