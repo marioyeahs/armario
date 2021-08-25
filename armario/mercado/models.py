@@ -1,12 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.translation import gettext as _
+
 # Create your models here.
 
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     numero = models.IntegerField()
     def __str__(self):
-        return f"Cliente {self.numero}"
+        return f"{self.user.username} - Celular:{self.numero}"
 
 class Marca(models.Model):
     nombre = models.CharField(max_length=255)
@@ -34,7 +38,10 @@ class Mercancia(models.Model):
     size_type = models.CharField(verbose_name="Miembro",max_length=2, choices=SIZE_TYPE)
     depto = models.CharField(verbose_name="Departamento",max_length=2, choices=DEPTO)
     def __str__(self):
-        return f"{self.marca} {self.modelo}, {self.size_type}."
+        return f"{self.marca} {self.modelo}."
+
+    def get_absolute_url(self):
+        return reverse('mercado:mercancia-detail', kwargs={'pk',self.pk})
 
 
 class Oferta_compra(models.Model):
@@ -72,3 +79,43 @@ class Ofertas_compradas(models.Model):
     fecha = models.DateTimeField()
     def __str__(self):
         return f"${self.monto}.00 mxn en {self.articulo.modelo} - De:{self.comprador} | Para:{self.comprador}"
+
+
+# class CustomAccountManager(BaseUserManager):
+    
+#     def create_superuser(self,email,user_name,first_name,password, **other_fields):
+#         other_fields.setdefault('is_staff',True)
+#         other_fields.setdefault('is_superuser',True)
+#         other_fields.setdefault('is_active',True)
+
+#         if other_fields.get('is_staff') is not True:
+#             raise ValueError("Superuser must be set to is_staff=True")
+
+#         return self.create_user(email,user_name,first_name,password,**other_fields)
+
+#     def create_user(self,email,user_name,first_name,password, **other_fields):
+        
+#         if not email:
+#             raise ValueError(_("Por favor intorduce un email válido"))
+
+#         user = self.model(email=email,user_name=user_name,first_name=first_name,**other_fields)
+#         user.set_password(password)
+#         user.save()
+#         return user
+        
+
+# class NewUser(AbstractBaseUser, PermissionsMixin):
+#     email = models.EmailField(_('email address'), unique=True)
+#     user_name = models.CharField(max_length=150, unique=True)
+#     first_name = models.CharField(max_length=150, blank=True)
+#     start_date = models.DateField(default=timezone.now)
+#     is_active = models.BooleanField(default=False)
+#     is_staff = models.BooleanField(default=False)
+
+#     objects = CustomAccountManager()
+    
+#     USER_NAME = 'email'
+#     REQUIRED_FIELDS = ['user_name']
+
+#     def __str__(self):
+#         return self.username
