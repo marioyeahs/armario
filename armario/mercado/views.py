@@ -398,5 +398,10 @@ class MasVendidosListView(ListView):
 class MercanciaDetailView(DetailView):
     model = Mercancia
 
+class MercanciaListView(ListView):
+    model = Mercancia
+    context_object_name = 'mercancia_list'
+    template_name = 'mercado/mercancia_list.html'
+
 
 
