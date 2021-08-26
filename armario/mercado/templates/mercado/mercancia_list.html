@@ -1,0 +1,16 @@
+{% extends "mercado/layout.html" %}
+
+{% block body %}
+
+    <h1>Mercancia List</h1>
+
+    <ul>
+        {% for mercancia in mercancia_list %}
+            <li>
+                {{mercancia}}
+            </li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}
