@@ -7,7 +7,7 @@
     <ul>
         {% for mercancia in mercancia_list %}
             <li>
-                {{mercancia}}
+                <a href="{{ mercancia.get_absolute_url }}">{{ mercancia }}</a>
             </li>
         {% endfor %}
     </ul>
