@@ -13,8 +13,9 @@
 
     <p>Tu oferta: {{request.session.monto}}
     <input type="hidden" name="monto" value={{request.session.monto}}>
+    <p>- Comisión: -7% {{comision}}</p>
     <p>- Envío: $200.00 mxn</p>
-    <p>- Comisión: -7%</p>
+    
     <label for="total">Total: ${{request.session.total}} mxn</label>
     <input type="hidden" name="total" value={{request.session.total}}>
     <p></p>
