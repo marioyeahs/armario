@@ -11,7 +11,7 @@ from django.views.generic import ListView, DetailView
 from datetime import datetime
 
 # Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas
+from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas, Successful_offer
 
 def fam_member(type,dept):
     sizes = []
@@ -100,7 +100,6 @@ def compra(request, producto_id):
 
     try:
         request.session['talla']=request.POST['talla']
-
         
         if request.POST['monto']:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
@@ -159,14 +158,26 @@ def venta(request,producto_id):
 
 def oferta_compra(request,producto_id):
     producto = Mercancia.objects.get(id=producto_id)
-    return render(request,"mercado/oferta_compra.html",{"producto":producto})
+    comision = request.session['comision']
+    return render(request,"mercado/oferta_compra.html",{
+        "producto":producto,
+        "comision": round(comision,2)
+        })
 
 def oferta_venta(request,producto_id):
     producto = Mercancia.objects.get(id=producto_id)
-    return render(request,"mercado/oferta_venta.html",{"producto":producto})
+    comision = request.session['comision']
+    return render(request,"mercado/oferta_venta.html",{
+        "producto":producto,
+        "comision": round(comision,2)
+        })
 
 @login_required
 def oferta_comprada(request,producto_id):
+    """
+        Cuando se acepta una oferta de venta, se crea una acepta una
+        oferta de comprada
+    """
     producto = get_object_or_404(Mercancia, pk=producto_id)
     monto=int(request.POST['monto'])
     size=request.POST['talla']
@@ -184,8 +195,8 @@ def oferta_comprada(request,producto_id):
     [o.comprador.email])
     send_mass_mail((message1,message2), fail_silently=False)
 
-    comision = .07*monto
-    monto=monto+200+comision
+    comision = round(.07*monto,2)
+
     Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
 
@@ -213,8 +224,7 @@ def oferta_vendida(request,producto_id):
     [o.comprador.email])
     send_mass_mail((message1,message2), fail_silently=False)
 
-    comision = .07*monto
-    monto=monto+200+comision
+    comision = round(.07*monto,2)
     Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
