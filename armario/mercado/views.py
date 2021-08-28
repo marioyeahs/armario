@@ -33,22 +33,6 @@ def fam_member(type,dept):
 
     return sizes
 
-def bubble_sort(lst):
-    swap_ocurred = True
-
-    while swap_ocurred:
-        swap_ocurred = False
-
-        for i in range(len(lst)-1):
-
-            if lst[i] > lst[i+1]:
-                temp=lst[i]
-                lst[i]=lst[i+1]
-                lst[i+1]=temp
-                swap_ocurred= True
-    
-    return lst
-
 class IndexListView(ListView):
     model = Mercancia
     template_name = "mercado/index.html"
@@ -60,8 +44,6 @@ class IndexListView(ListView):
         context = super(IndexListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
         context['marcas']=Marca.objects.all()
-        context['nike_product'] = Mercancia.objects.filter(marca=1)
-        context['adidas_product'] = Mercancia.objects.filter(marca=2)
 
         return context
 
@@ -91,8 +73,8 @@ class RegisterFormView(View):
         return render(request,self.template_name, {'form':form})
 
 
-def detalles(request,producto_id):
-    producto = get_object_or_404(Mercancia, pk=producto_id)
+def detalles(request,pk):
+    producto = get_object_or_404(Mercancia, pk=pk)
     tallas = fam_member(producto.size_type,producto.depto)
     ofertas_compra=[]
     ofertas_venta=[]
@@ -118,8 +100,6 @@ def compra(request, producto_id):
 
     try:
         request.session['talla']=request.POST['talla']
-        if(Oferta_compra.objects.filter(comprador=request.user,talla=request.POST['talla'],articulo=producto)):
-            print("Ya hay oferta en este articulo")
 
         
         if request.POST['monto']:
@@ -360,18 +340,18 @@ def eliminar_venta(request,oferta_id):
 
 class MarcaListView(ListView):
     model = Marca
+    #we can override the get_queryset() method to change the list of records returned.
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
         return Marca.objects.filter(nombre=self.marca)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
+        context = super(MarcaListView, self).get_context_data(**kwargs)
         # Add in the publisher
         context['productos'] = Mercancia.objects.filter(marca=self.marca)
         context['marca']=self.marca
         context['marcas']=Marca.objects.all()
-
         return context
 
 class MasVendidosListView(ListView):
