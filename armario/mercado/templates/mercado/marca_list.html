@@ -2,12 +2,12 @@
 
 {% block body %}
 
-MARCA {{marca}}
+<h1>{{marca}}</h1>
 
 <h2>Ver otras marcas</h2>
 <ul>
-    {% for brand in marcas %}
-        <li><a href="{% url 'mercado:marca' brand %}">{{brand}}</a></li>
+    {% for marca in marcas %}
+        <li><a href="{% url 'mercado:marca' marca %}">{{marca}}</a></li>
     {% endfor %}
 </ul>
 
