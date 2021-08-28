@@ -41,7 +41,8 @@ class Mercancia(models.Model):
         return f"{self.marca} {self.modelo}."
 
     def get_absolute_url(self):
-        return reverse('mercado:detalles', args=[self.id])
+        return reverse('mercado:detalles', kwargs={'pk':self.pk})
+        
 
 class Oferta_compra(models.Model):
     monto = models.IntegerField()
