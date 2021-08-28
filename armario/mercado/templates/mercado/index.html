@@ -12,7 +12,7 @@
     <h1>Productos</h1>
     <ul>
         {% for producto in mercancia_list %}
-            <li> <a href="{% url 'mercado:detalles' producto.id %}">{{ producto.modelo }}</a> </li>
+            <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
         {% empty %}
             <li>No hay productos de mujer</li>
         {% endfor %}
