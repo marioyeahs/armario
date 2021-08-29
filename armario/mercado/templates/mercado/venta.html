@@ -1,26 +1,22 @@
 {% extends "mercado/layout.html" %}
 
 {% block body %}
-<h1>Vendiendo producto: {{producto.modelo}}</h1>
 
+<h1>Tu oferta de venta en {{producto.modelo}}</h1>
 
-
-
-<form action="{% url 'mercado:vendido' producto.id %}" method="POST">
+<form action="{% url 'mercado:oferta_venta_enviada' producto.id %}" method="POST">
     {% csrf_token %}
-    <p>Marca: {{producto.marca}}</p> 
+
     <label for="talla">Talla: {{request.session.talla}}</label>
     <input type="hidden" name="talla" value="{{request.session.talla}}">
-    <p></p>
-
-    <p>Tu oferta: {{request.session.monto}}
+    <p>Tu oferta: ${{request.session.monto}}.00 mxn</p>
     <input type="hidden" name="monto" value={{request.session.monto}}>
+    <p>- Comisión (7%): ${{request.session.comision}} mxn</p>
     <p>- Envío: $200.00 mxn</p>
-    <p>- Comisión: -7%</p>
     <label for="total">Total: ${{request.session.total}} mxn</label>
     <input type="hidden" name="total" value={{request.session.total}}>
     <p></p>
-    <input type="submit" value="Vender">
+    <input type="submit" value="Activar oferta">
 </form>
 
 {% endblock %}
