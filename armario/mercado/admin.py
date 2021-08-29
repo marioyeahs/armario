@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 # Register your models here.
 
-from mercado.models import Oferta_compra, Mercancia, Marca, Cliente, Oferta_venta, Ofertas_compradas
+from mercado.models import Oferta_compra, Mercancia, Marca, Cliente, Oferta_venta, Ofertas_compradas, Successful_offer
 
 admin.site.register(Oferta_compra)
 admin.site.register(Oferta_venta)
@@ -12,6 +12,7 @@ admin.site.register(Marca)
 # admin.site.register(Cliente)
 admin.site.register(Mercancia)
 admin.site.register(Ofertas_compradas)
+admin.site.register(Successful_offer)
 
 class ClienteInLine(admin.StackedInline):
     model = Cliente
