@@ -6,17 +6,14 @@
 
 <form action="{% url 'mercado:oferta_vendida' producto.id %}" method="POST">
     {% csrf_token %}
-    <p>Marca: {{producto.marca}}</p> 
+
     <label for="talla">Talla: {{request.session.talla}}</label>
     <input type="hidden" name="talla" value="{{request.session.talla}}">
-    <p></p>
-
-    <p>Tu oferta: {{request.session.monto}}
+    <p>Oferta: ${{request.session.monto}}.00 mxn
     <input type="hidden" name="monto" value={{request.session.monto}}>
-    <p>- Comisión: -7% {{comision}}</p>
+    <p>- Comisión (7%): ${{comision}}0 mxn</p>
     <p>- Envío: $200.00 mxn</p>
-    
-    <label for="total">Total: ${{request.session.total}} mxn</label>
+    <label for="total">Total: ${{request.session.total}}0 mxn</label>
     <input type="hidden" name="total" value={{request.session.total}}>
     <p></p>
     <input type="submit" value="Vender">
