@@ -2,21 +2,21 @@
 
 {% block body %}
 
-<h1>Detalles de tu oferta en {{producto.modelo}} </h1>
+<h1>Tu oferta de compra en {{producto.modelo}} </h1>
 
-<form action="{% url 'mercado:comprado' producto.id %}" method="POST">
+<form action="{% url 'mercado:oferta_compra_enviada' producto.id %}" method="POST">
     {% csrf_token %}
+
+    <label for="talla">Talla: {{request.session.talla}}</label>
     <input type="hidden" name="talla" value="{{request.session.talla}}">
     <p>Tu oferta: ${{request.session.monto}}.00 mxn</p>
     <input type="hidden" name="monto" value={{request.session.monto}}>
-    <p>+ Envío: $200.00 mxn</p>
     <p>+ Comisión (7%): ${{request.session.comision}} mxn</p>
+    <p>+ Envío: $200.00 mxn</p>
     <label for="total">Total: ${{request.session.total}} mxn</label>
     <input type="hidden" name="total" value={{request.session.total}}>
     <p></p>
-    <input type="submit" value="Enviar oferta">
+    <input type="submit" value="Activar oferta">
 </form>
-
-
 
 {% endblock %}
