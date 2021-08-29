@@ -48,7 +48,7 @@ class Oferta_compra(models.Model):
     monto = models.IntegerField()
     comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
-    articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    articulo = models.ForeignKey(Mercancia, on_delete=models.RESTRICT)
     fecha = models.DateTimeField()
     def __str__(self):
         return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
@@ -57,28 +57,41 @@ class Oferta_compra(models.Model):
         """verify if the offer is greater than the deilvery cost"""
         return self.monto > 200
 
-
-
 class Oferta_venta(models.Model):
     monto = models.IntegerField()
     comprador = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
-    articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
+    articulo = models.ForeignKey(Mercancia, on_delete=models.RESTRICT)
     fecha = models.DateTimeField()
     def __str__(self):
         return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
 
+class Successful_offer(models.Model):
+    oferta_comprada = models.OneToOneField(Oferta_compra, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='comprada')
+    oferta_vendida = models.OneToOneField(Oferta_venta, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='vendida')
+    #ganador, aquel que acepta la oferta de compra o venta
+    ganador = models.ForeignKey(User, on_delete=models.CASCADE)
+    comision = models.FloatField()
+
+    # def select_offer(self):
+    #     if self.oferta_vendida != None:
+    #         return "Oferta vendida"
+    #     else:
+    #         return "Oferta_comprada"
+
+    def __str__(self):
+        return f"Comprada:{self.oferta_vendida} - Vendida:{self.oferta_comprada} | Ganador:{self.ganador}"
+
 class Ofertas_compradas(models.Model):
     monto = models.IntegerField()
-    comision_comprador = models.FloatField()
-    comision_vendedor = models.FloatField()
+    comision= models.FloatField()
     comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comprador')
     vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
     talla = models.CharField(max_length=5, null=True,blank=True)
     articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo.modelo} - De:{self.comprador} | Para:{self.comprador}"
+        return f"${self.monto}.00 mxn en {self.articulo.modelo} - De:{self.vendedor} | Para:{self.comprador} | Comisión:${self.comision}"
 
 
 # class CustomAccountManager(BaseUserManager):
