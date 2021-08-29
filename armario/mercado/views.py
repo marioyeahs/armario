@@ -135,13 +135,13 @@ def venta(request,producto_id):
             request.session['monto']=request.session['vender_ahora']=int(request.POST['monto'])
             print('**********Oferta venta************')
             print(request.session['monto'])
-            request.session['comision']=.07*request.session['monto']
+            request.session['comision']=round(.07*request.session['monto'],2)
             request.session['total']=request.session['monto']-200-request.session['comision']
         else:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['vender_ahora'])
             print('-----------Vender ahora----------------')
             print(request.session['monto'])
-            request.session['comision']=.07*request.session['monto']
+            request.session['comision']=round(.07*request.session['monto'],2)
             request.session['total']=request.session['vender_ahora']-200-request.session['comision']
 
             return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(producto.id,)))
@@ -196,8 +196,8 @@ def oferta_comprada(request,producto_id):
     send_mass_mail((message1,message2), fail_silently=False)
 
     comision = round(.07*monto,2)
-
-    Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
+    # Successful_offer.objects.create(oferta_comprada=None, oferta_vendida=o, ganador=request.user, comision=comision)
+    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
 
     return render(request,"mercado/oferta_comprada.html",{
@@ -225,7 +225,9 @@ def oferta_vendida(request,producto_id):
     send_mass_mail((message1,message2), fail_silently=False)
 
     comision = round(.07*monto,2)
-    Ofertas_compradas.objects.create(monto=monto,comision_comprador=comision,comision_vendedor=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
+    # Successful_offer.objects.create(oferta_comprada=o, oferta_vendida=None, ganador=request.user, comision=comision)
+    
+    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
         'usuario':request.user.username,
@@ -234,9 +236,9 @@ def oferta_vendida(request,producto_id):
         'talla':size,
     })
 
-#buy offer successful
+#buy offer sent successfully
 @login_required
-def comprado(request,producto_id):
+def oferta_compra_enviada(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
     monto=int(request.POST['monto'])
@@ -273,14 +275,15 @@ def comprado(request,producto_id):
 
     o.save()
     
-    return render(request,"mercado/comprado.html",{
+    return render(request,"mercado/oferta_compra_enviada.html",{
         "producto":producto,
         "talla":size,
         "monto":monto,
         })
 
+#sell offer sent successfully
 @login_required
-def vendido(request,producto_id):
+def oferta_venta_enviada(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
     monto=int(request.POST['monto'])
@@ -316,7 +319,7 @@ def vendido(request,producto_id):
 
     o.save()
 
-    return render(request,"mercado/vendido.html",{
+    return render(request,"mercado/oferta_venta_enviada.html",{
         "producto":producto,
         "talla":size,
         "monto":monto,
