@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.core.mail import send_mail, send_mass_mail
 from django.http.response import HttpResponse
 from django.http import Http404,HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -244,6 +245,10 @@ def oferta_compra_enviada(request,producto_id):
     monto=request.session['monto']
     size=request.session['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=p,talla=size,articulo=producto)
+    if oferta_duplicada:
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
     users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
     for i in users:
