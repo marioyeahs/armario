@@ -9,6 +9,14 @@
 
 {% block body %}
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <h1><a href="{% url 'mercado:marca' producto.marca %}">{{producto.marca}}</a> | {{producto.modelo}}</h1>
 
 <img src="{% static 'mercado/img/' %}{{producto.modelo}}.jpg" alt="{{producto.modelo}}">
