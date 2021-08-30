@@ -179,8 +179,8 @@ def oferta_comprada(request,producto_id):
         oferta de comprada
     """
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.POST['monto'])
-    size=request.POST['talla']
+    monto=int(request.session['monto'])
+    size=request.session['talla']
     o=Oferta_venta.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
 
     message1=('Felicidades, has vendido {{producto}}',
@@ -210,8 +210,8 @@ def oferta_comprada(request,producto_id):
 @login_required
 def oferta_vendida(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.POST['monto'])
-    size=request.POST['talla']
+    monto=int(request.session['monto'])
+    size=request.session['talla']
     o=Oferta_compra.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
 
     message1=('Felicidades, has vendido {{producto}}',
@@ -227,7 +227,7 @@ def oferta_vendida(request,producto_id):
     comision = round(.07*monto,2)
     # Successful_offer.objects.create(oferta_comprada=o, oferta_vendida=None, ganador=request.user, comision=comision)
     
-    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
+    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=o.comprador, vendedor=request.user ,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
         'usuario':request.user.username,
@@ -241,8 +241,8 @@ def oferta_vendida(request,producto_id):
 def oferta_compra_enviada(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.POST['monto'])
-    size=request.POST['talla']
+    monto=request.session['monto']
+    size=request.session['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
     users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
@@ -286,8 +286,8 @@ def oferta_compra_enviada(request,producto_id):
 def oferta_venta_enviada(request,producto_id):
     p = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.POST['monto'])
-    size=request.POST['talla']
+    monto=int(request.session['monto'])
+    size=request.session['talla']
     o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
 
     users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
