@@ -11,3 +11,7 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(label='E-mail')
     passwd = forms.CharField(max_length=250, widget=forms.PasswordInput)
 
+    def send_email(self):
+        email = self.cleaned_data['email']
+        print(f"email enviado {email}")
+
