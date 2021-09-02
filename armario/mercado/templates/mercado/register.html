@@ -4,7 +4,17 @@
 
 <h1>Regístrate</h1>
 
-<form action="{% url 'mercado:register' %}" method="POST">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% empty %}
+        <li>No hay mensajes</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST">
     {% csrf_token %}
     {{form.as_p}}
     <input type="submit" value="Registrarse!">
