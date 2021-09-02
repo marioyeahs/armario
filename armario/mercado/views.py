@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic.edit import CreateView
 from django.core.mail import send_mail, send_mass_mail
 from django.http.response import HttpResponse
 from django.http import Http404,HttpResponseRedirect
@@ -9,6 +11,7 @@ from django.contrib.auth.models import User
 from mercado.forms import RegisterForm
 from django.views import View
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
 from datetime import datetime
 
 # Create your views here.
@@ -48,15 +51,16 @@ class IndexListView(ListView):
 
         return context
 
-class RegisterFormView(View):
+class RegisterFormView(SuccessMessageMixin, FormView):
+    template_name = 'mercado/register.html'
     form_class = RegisterForm
     initial = {'key':'value'}
-    template_name = 'mercado/register.html'
+    success_message = "%(email)s was created successfully"
 
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request,self.template_name, {'form':form})
-    
+    # def get(self, request, *args, **kwargs):
+    #     form = self.form_class(initial=self.initial)
+    #     return render(request,self.template_name, {'form':form})
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -68,8 +72,10 @@ class RegisterFormView(View):
             new_user.save()
             new_client = Cliente(user=new_user,numero=phone)
             new_client.save()
+            form.send_email()
+            messages.success(request, "Usuario registrado correctamente")
 
-            return HttpResponseRedirect(reverse('mercado:index'))
+            return HttpResponseRedirect(reverse('mercado:register'))
     
         return render(request,self.template_name, {'form':form})
 
