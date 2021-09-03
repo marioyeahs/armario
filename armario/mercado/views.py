@@ -251,10 +251,13 @@ def oferta_compra_enviada(request,producto_id):
     monto=request.session['monto']
     size=request.session['talla']
     o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
+
     oferta_duplicada = Oferta_compra.objects.filter(comprador=p,talla=size,articulo=producto)
     if oferta_duplicada:
         messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+
         return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
+
     users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
     for i in users:
@@ -300,6 +303,12 @@ def oferta_venta_enviada(request,producto_id):
     monto=int(request.session['monto'])
     size=request.session['talla']
     o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
+
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=p,talla=size,articulo=producto)
+    if oferta_duplicada:
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+
+        return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
 
     users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
