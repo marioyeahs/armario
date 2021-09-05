@@ -243,21 +243,29 @@ def oferta_vendida(request,producto_id):
         'talla':size,
     })
 
-#buy offer sent successfully
-@login_required
-def oferta_compra_enviada(request,producto_id):
-    p = User.objects.get(pk=request.user.pk)
-    producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=request.session['monto']
-    size=request.session['talla']
-    o=Oferta_compra(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())
-
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=p,talla=size,articulo=producto)
+    #checar si la oferta es válida
+def check_offer(usuario, size, producto, request):
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
+    print(oferta_duplicada)
     if oferta_duplicada:
         messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        print("!!!! Oferta de venta duplicada   !!!!")
 
         return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
 
+
+#buy offer sent successfully
+@login_required
+def oferta_compra_enviada(request,producto_id):
+    usuario = User.objects.get(pk=request.user.pk)
+    producto = get_object_or_404(Mercancia, pk=producto_id)
+    monto=request.session['monto']
+    size=request.session['talla']
+    o=Oferta_compra(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())
+
+    #check duplicated
+    check_offer(usuario, size, producto, request)
+    
     users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
     for i in users:
@@ -272,6 +280,7 @@ def oferta_compra_enviada(request,producto_id):
         oferta_mayor=oferta_mayor.monto
     except AttributeError:
         oferta_mayor=0
+        
     if(o.monto > oferta_mayor):
         print("oferta mayor")
         message2=('Una oferta mayor ha sido colocada',
@@ -295,21 +304,19 @@ def oferta_compra_enviada(request,producto_id):
         "monto":monto,
         })
 
+
 #sell offer sent successfully
 @login_required
 def oferta_venta_enviada(request,producto_id):
-    p = User.objects.get(pk=request.user.pk)
+    usuario = User.objects.get(pk=request.user.pk)
     producto = get_object_or_404(Mercancia, pk=producto_id)
     monto=int(request.session['monto'])
     size=request.session['talla']
-    o=Oferta_venta(monto=monto,comprador=p,talla=size,articulo=producto,fecha=datetime.today())    
+    o=Oferta_venta(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())    
 
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=p,talla=size,articulo=producto)
-    if oferta_duplicada:
-        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
-
-        return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
-
+    #check duplicated offer
+    check_offer(usuario,size,producto,request)
+    
     users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
     for i in users:
