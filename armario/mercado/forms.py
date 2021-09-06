@@ -10,6 +10,7 @@ class RegisterForm(forms.Form):
     phone = forms.IntegerField()
     email = forms.EmailField(label='E-mail')
     passwd = forms.CharField(max_length=250, widget=forms.PasswordInput, label='Contraseña')
+    confirm_passwd = forms.CharField(max_length=250, widget=forms.PasswordInput, label='Confirmar contraseña')
 
     def send_email(self):
         email = self.cleaned_data['email']
