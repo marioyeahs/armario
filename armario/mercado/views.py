@@ -67,13 +67,19 @@ class RegisterFormView(SuccessMessageMixin, FormView):
             usuario = form.cleaned_data['usuario']
             email = form.cleaned_data['email']
             passwd = form.cleaned_data['passwd']
+            confirm_passwd = form.cleaned_data['confirm_passwd']
+            if passwd != confirm_passwd:
+                messages.error(request, "por favor verifica las contraseñas")
+
+                return HttpResponseRedirect(reverse('mercado:register'))
+
             phone = form.cleaned_data['phone']
             new_user = User.objects.create_user(usuario,email,passwd)
             new_user.save()
             new_client = Cliente(user=new_user,numero=phone)
             new_client.save()
             form.send_email()
-            messages.success(request, "Usuario registrado correctamente")
+            messages.success(request, 'Usuario registrado correctamente, se ha enviado un correo de verificación a %s' %email)
 
             return HttpResponseRedirect(reverse('mercado:register'))
     
