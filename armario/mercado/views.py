@@ -108,17 +108,21 @@ def detalles(request,pk):
         'compras':compras,
         })
 
+
+def define_buy_offer(request):
+    request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
+    print('**********Oferta compra************')
+    print(request.session['monto'])
+    request.session['comision'] = round(.07*request.session['monto'],2)
+
 def compra(request, producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
 
     try:
         request.session['talla']=request.POST['talla']
-        
+
         if request.POST['monto']:
-            request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
-            print('**********Oferta compra************')
-            print(request.session['monto'])
-            request.session['comision'] = round(.07*request.session['monto'],2)
+            define_buy_offer(request)
             request.session['total']=request.session['monto']+200+request.session['comision']
         else:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['comprar_ahora'])
@@ -191,6 +195,7 @@ def oferta_comprada(request,producto_id):
         Cuando se acepta una oferta de venta, se crea una acepta una
         oferta de comprada
     """
+
     producto = get_object_or_404(Mercancia, pk=producto_id)
     monto=int(request.session['monto'])
     size=request.session['talla']
@@ -239,7 +244,7 @@ def oferta_vendida(request,producto_id):
 
     comision = round(.07*monto,2)
     # Successful_offer.objects.create(oferta_comprada=o, oferta_vendida=None, ganador=request.user, comision=comision)
-    
+
     Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=o.comprador, vendedor=request.user ,talla=size, articulo=producto,fecha=datetime.today())
     o.delete()
     return render(request,"mercado/oferta_vendida.html",{
