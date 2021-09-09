@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail, send_mass_mail
-from django.http.response import HttpResponse
-from django.http import Http404,HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseNotModified, HttpResponsePermanentRedirect, HttpResponseNotAllowed, HttpResponseNotFound
+from django.http import Http404,HttpResponseRedirect, HttpResponseNotAllowed, HttpResponseNotFound
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from mercado.forms import RegisterForm
@@ -36,6 +36,22 @@ def fam_member(type,dept):
         sizes=['XS','S','M','L','XL','XXL']
 
     return sizes
+
+def add_checkout(request):
+    print(request.session['monto'])
+    request.session['comision'] = round(.07*request.session['monto'],2)
+    request.session['total']=request.session['monto']+200+request.session['comision']  
+
+    #checar si la oferta es válida
+def check_offer(usuario, size, producto, request):
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
+    print(oferta_duplicada)
+    if oferta_duplicada:
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        print("!!!!     Oferta de venta duplicada   !!!!")
+        
+        return HttpResponseRedirect(reverse(producto))
+
 
 class IndexListView(ListView):
     model = Mercancia
@@ -106,14 +122,7 @@ def detalles(request,pk):
         'tallas':tallas,
         'ventas':ventas,
         'compras':compras,
-        })
-
-
-def define_buy_offer(request):
-    request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
-    print('**********Oferta compra************')
-    print(request.session['monto'])
-    request.session['comision'] = round(.07*request.session['monto'],2)
+        })  
 
 def compra(request, producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
@@ -122,14 +131,13 @@ def compra(request, producto_id):
         request.session['talla']=request.POST['talla']
 
         if request.POST['monto']:
-            define_buy_offer(request)
-            request.session['total']=request.session['monto']+200+request.session['comision']
+            request.session['monto']=request.session['comprar_ahora']=int(request.POST['monto'])
+            print('**********Oferta compra************')
+            add_checkout(request)
         else:
             request.session['monto']=request.session['comprar_ahora']=int(request.POST['comprar_ahora'])
             print('-----------Comprar ahora----------------')
-            print(request.session['monto'])
-            request.session['comision'] = round(.07*request.session['monto'],2)
-            request.session['total']=request.session['comprar_ahora']+200+request.session['comision']
+            add_checkout(request)
 
             return HttpResponseRedirect(reverse('mercado:oferta_compra',args=(producto.id,)))
 
@@ -254,17 +262,6 @@ def oferta_vendida(request,producto_id):
         'talla':size,
     })
 
-    #checar si la oferta es válida
-def check_offer(usuario, size, producto, request):
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
-    print(oferta_duplicada)
-    if oferta_duplicada:
-        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
-        print("!!!! Oferta de venta duplicada   !!!!")
-
-        return HttpResponseRedirect(reverse('mercado:detalles', args=[producto.pk]))
-
-
 #buy offer sent successfully
 @login_required
 def oferta_compra_enviada(request,producto_id):
@@ -275,7 +272,13 @@ def oferta_compra_enviada(request,producto_id):
     o=Oferta_compra(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())
 
     #check duplicated
-    check_offer(usuario, size, producto, request)
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
+    print(oferta_duplicada)
+    if oferta_duplicada:
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        print("!!!!     Oferta de venta duplicada   !!!!")
+        
+        return HttpResponseRedirect(reverse('mercado:detalles', args=(producto.id,)))
     
     users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
@@ -326,7 +329,13 @@ def oferta_venta_enviada(request,producto_id):
     o=Oferta_venta(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())    
 
     #check duplicated offer
-    check_offer(usuario,size,producto,request)
+    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
+    print(oferta_duplicada)
+    if oferta_duplicada:
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        print("!!!!     Oferta de venta duplicada   !!!!")
+        
+        return HttpResponseRedirect(reverse('mercado:detalles', args=(producto.id,)))
     
     users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
     emails=[]
