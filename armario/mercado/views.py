@@ -52,7 +52,6 @@ def check_offer(usuario, size, producto, request):
         
         return HttpResponseRedirect(reverse(producto))
 
-
 class IndexListView(ListView):
     model = Mercancia
     template_name = "mercado/index.html"
@@ -152,6 +151,12 @@ def compra(request, producto_id):
 
         return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
 
+def discount_comission(request):
+    print(request.session['monto'])
+    request.session['comision']=round(.07*request.session['monto'],2)
+    request.session['total']=request.session['monto']-200-request.session['comision']
+        
+
 def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
     try:
@@ -159,15 +164,11 @@ def venta(request,producto_id):
         if request.POST['monto']:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['monto'])
             print('**********Oferta venta************')
-            print(request.session['monto'])
-            request.session['comision']=round(.07*request.session['monto'],2)
-            request.session['total']=request.session['monto']-200-request.session['comision']
+            discount_comission(request)
         else:
             request.session['monto']=request.session['vender_ahora']=int(request.POST['vender_ahora'])
             print('-----------Vender ahora----------------')
-            print(request.session['monto'])
-            request.session['comision']=round(.07*request.session['monto'],2)
-            request.session['total']=request.session['vender_ahora']-200-request.session['comision']
+            discount_comission(request)
 
             return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(producto.id,)))
 
