@@ -36,7 +36,6 @@ def fam_member(type,dept):
         sizes=['XS','S','M','L','XL','XXL']
 
     return sizes
-
 def add_checkout(request):
     print(request.session['monto'])
     request.session['comision'] = round(.07*request.session['monto'],2)
@@ -51,6 +50,10 @@ def check_offer(usuario, size, producto, request):
         print("!!!!     Oferta de venta duplicada   !!!!")
         
         return HttpResponseRedirect(reverse(producto))
+def discount_comission(request):
+    print(request.session['monto'])
+    request.session['comision']=round(.07*request.session['monto'],2)
+    request.session['total']=request.session['monto']-200-request.session['comision']
 
 class IndexListView(ListView):
     model = Mercancia
@@ -99,7 +102,6 @@ class RegisterFormView(SuccessMessageMixin, FormView):
             return HttpResponseRedirect(reverse('mercado:register'))
     
         return render(request,self.template_name, {'form':form})
-
 
 def detalles(request,pk):
     producto = get_object_or_404(Mercancia, pk=pk)
@@ -150,12 +152,6 @@ def compra(request, producto_id):
     else:
 
         return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
-
-def discount_comission(request):
-    print(request.session['monto'])
-    request.session['comision']=round(.07*request.session['monto'],2)
-    request.session['total']=request.session['monto']-200-request.session['comision']
-        
 
 def venta(request,producto_id):
     producto = get_object_or_404(Mercancia, pk=producto_id)
@@ -214,12 +210,12 @@ def oferta_comprada(request,producto_id):
     "Enhorabuena, por favor envíanos tu producto en su caja original",
     # DEFAULT_FROM_EMAIL setting.,
     'webmaster@localhost',
-    [request.user.email])
+    [o.comprador.email])
     message2=('Se ha aceptado tu oferta!', 
     'Felicidades, tu producto llegará en los próximos días hábiles',
     # DEFAULT_FROM_EMAIL setting.,
     'webmaster@localhost',
-    [o.comprador.email])
+    [request.user.email])
     send_mass_mail((message1,message2), fail_silently=False)
 
     comision = round(.07*monto,2)
