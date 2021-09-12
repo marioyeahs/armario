@@ -14,7 +14,7 @@
 
 <ul>
     {% for oferta in ofertas_compra %}
-        <li>$ {{oferta.monto}}.00 mxn - <a href="/mercado/{{oferta.articulo.id}}/detalles">{{oferta.articulo}}</a> - {{oferta.fecha.date}}</li>
+        <li>$ {{oferta.monto}}.00 mxn - <a href="/mercado/{{oferta.articulo.id}}/detalles">{{oferta.articulo}}</a> - {{oferta.talla}} - {{oferta.fecha.date}}</li>
         <button class="eliminar_compra"><a href="{% url 'mercado:eliminar_compra' oferta.id %}">Eliminar oferta</a></button>
         
     {% empty %}
@@ -25,7 +25,7 @@
 <h1>Venta:</h1>
 <ul>
     {% for oferta in ofertas_venta %}
-        <li>$ {{oferta.monto}}.00 mxn - <a href="{% url 'mercado:detalles' oferta.articulo.id %}" target="_blank">{{oferta.articulo}}</a> - {{oferta.fecha}}</li>
+        <li>$ {{oferta.monto}}.00 mxn - <a href="{% url 'mercado:detalles' oferta.articulo.id %}" target="_blank">{{oferta.articulo}}</a>- {{oferta.talla}} - {{oferta.fecha}}</li>
         <button class="eliminar_venta"><a href="{% url 'mercado:eliminar_venta' oferta.id %}">Eliminar oferta</a></button>
         {% empty %}
             <li>No has realizado ofertas.</li>
