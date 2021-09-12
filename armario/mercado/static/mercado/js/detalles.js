@@ -76,10 +76,26 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
+
     // Install input filters.
-    setInputFilter(document.getElementById("intTextBox"), function (value) {
+    setInputFilter(monto, function (value) {
         return /^\d*$/.test(value);
     });
+
+    // monto.onkeydown = function () {
+    //     console.log("ok!")
+    // }
+
+    monto.onkeyup = check;
+    let offer;
+    let oferta = document.getElementById("oferta");
+
+    function check(e){
+        offer = e.target.value;
+        console.log(offer)
+        oferta.innerHTML = offer;
+    }
+
 });
 
 
