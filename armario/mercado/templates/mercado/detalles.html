@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block head %}
-<script type="text/javascript" src="{% static 'mercado/js/detalles.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mercado/js/detalles.js' %}"></script>
 {% endblock %}
 
 
@@ -21,7 +21,7 @@
 
 <img src="{% static 'mercado/img/' %}{{producto.modelo}}.jpg" alt="{{producto.modelo}}">
 
-<form action="{% url 'mercado:compra' producto.id %}" method="POST"> 
+<form id="detailsForm" action="{% url 'mercado:compra' producto.id %}" method="POST"> 
     {% csrf_token %}
     <fieldset>
     <h1>Comprar</h1>
@@ -38,8 +38,8 @@
     {% endfor %}
     <hr>
     <label>Monto:</label>
-    <input id="intTextBox" name="monto" type="text">
-    <p id="posicion">Tu oferta:</p>
+    <input id="intTextBox" name="monto" type="number">
+    <p id="posicion">Tu oferta: <span id="oferta"></span> </p>
     </fieldset>
     <input type="submit" id="oferta_compra" value="Oferta de compra"> 
     <input type="submit" id="oferta_venta" value="Oferta de venta" formaction="{% url 'mercado:venta' producto.id %}">
