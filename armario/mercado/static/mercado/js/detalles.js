@@ -26,7 +26,13 @@ document.addEventListener("DOMContentLoaded", function(){
     const boton_venta = document.getElementsByClassName('vender_ahora')
     const radios = document.querySelectorAll("input[type=radio]");
     const submits = document.querySelectorAll("button");
-    const oferta = document.getElementById("oferta");
+    const check = document.getElementById("oferta");
+    const tallas = document.getElementsByClassName("tallas")
+    const mins = document.getElementsByClassName("min")
+    const maxs = document.getElementsByClassName("max")
+    let indice=0;
+    tallas[indice].checked = true;
+
 
     monto.value='';
 
@@ -48,12 +54,20 @@ document.addEventListener("DOMContentLoaded", function(){
 
     radios.forEach(function(radio){
         radio.onclick = function() {
+            check.innerHTML=''
             monto.value='';
+            for (let i=0; i<tallas.length; i++){
+                    if(tallas[i].checked == true){
+                        indice = i;
+                        console.log(indice)
+                        console.log(tallas[indice].value)
+                    }
+            }
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
                 boton_venta[i].disabled=true;
             }
-            index = Array.prototype.indexOf.call(radios,radio);
+            let index = Array.prototype.indexOf.call(radios,radio);
             if(submits[index].value === 'None'){
                 submits[index].disabled = true;
             }else{
@@ -62,8 +76,9 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }
     });
-    let offer;
+    
     monto.onkeyup = (e) => {
+
         if (monto.value.length > 0){
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
@@ -75,9 +90,11 @@ document.addEventListener("DOMContentLoaded", function(){
             submit_oferta_venta.disabled=true;
             submit_oferta_compra.disabled=true;
         }
-        offer = e.target.value;
+        let offer = e.target.value; // la cantidad que se está escribiendo
         console.log(offer)
-        oferta.innerHTML = offer;
+        if(mins[indice].innerHTML=="None"){
+            check.innerHTML = "Tu oferta será la más alta"
+        }
     }
 
 
