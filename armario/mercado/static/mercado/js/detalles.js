@@ -54,13 +54,20 @@ document.addEventListener("DOMContentLoaded", function(){
 
     radios.forEach(function(radio){
         radio.onclick = function() {
+            var cambio;
             check.innerHTML=''
             monto.value='';
             for (let i=0; i<tallas.length; i++){
                     if(tallas[i].checked == true){
                         indice = i;
+                        console.log(indice);
+                        console.log(tallas[indice].value);
+                        cambio = false
+                    }
+                    if(indice>=5){
+                        indice = indice-5;
                         console.log(indice)
-                        console.log(tallas[indice].value)
+                        cambio = true
                     }
             }
             for(let i = 0;i<boton_compra.length;i++){
@@ -90,14 +97,30 @@ document.addEventListener("DOMContentLoaded", function(){
             submit_oferta_venta.disabled=true;
             submit_oferta_compra.disabled=true;
         }
-        let highest_offer = mins[indice].innerHTML;
+        
         let offer = e.target.value; // la cantidad que se está escribiendo
         console.log(offer)
-        if(highest_offer=="None" || parseInt(highest_offer)<offer){
-            check.innerHTML = "Tu oferta será la más alta";
-        }else if(parseInt(highest_offer)>offer){
-            check.innerHTML = "Tu oferta no es la más alta";
+
+        try{
+            if(cambio==false){
+                let highest_offer = mins[indice].innerHTML;
+                if(highest_offer=="None" || parseInt(highest_offer)<offer){
+                    check.innerHTML = "Tu oferta será la más alta";
+                }else if(parseInt(highest_offer)>offer){
+                    check.innerHTML = "Tu oferta no es la más alta";
+                }
+            }
+
+        }finally{
+            indice = 5-indice;
+            let lowest_offer =maxs[indice].innerHTML;
+            if(lowest_offer=="None" || parseInt(lowest_offer)>offer){
+                check.innerHTML = "Tu oferta será la más baja";
+            }else if(parseInt(lowest_offer)<offer){
+                check.innerHTML = "Tu oferta no es la más baja";
+            }
         }
+
     }
 
 
