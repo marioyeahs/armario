@@ -90,10 +90,13 @@ document.addEventListener("DOMContentLoaded", function(){
             submit_oferta_venta.disabled=true;
             submit_oferta_compra.disabled=true;
         }
+        let highest_offer = mins[indice].innerHTML;
         let offer = e.target.value; // la cantidad que se está escribiendo
         console.log(offer)
-        if(mins[indice].innerHTML=="None"){
-            check.innerHTML = "Tu oferta será la más alta"
+        if(highest_offer=="None" || parseInt(highest_offer)<offer){
+            check.innerHTML = "Tu oferta será la más alta";
+        }else if(parseInt(highest_offer)>offer){
+            check.innerHTML = "Tu oferta no es la más alta";
         }
     }
 
