@@ -54,21 +54,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
     radios.forEach(function(radio){
         radio.onclick = function() {
-            var cambio;
             check.innerHTML=''
             monto.value='';
             for (let i=0; i<tallas.length; i++){
                     if(tallas[i].checked == true){
-                        indice = i;
-                        console.log(indice);
-                        console.log(tallas[indice].value);
-                        cambio = false
+                        if(i<=4){
+                            var indice_compra = i;
+                            indice_venta=null;
+                            console.log(`Indice compra:${indice_compra}`);
+                            console.log(`Indice venta:${indice_venta}`);
+                            console.log(tallas[indice_compra].value);
+                        }else{
+                            var indice_venta = i-5;
+                            indice_compra=null;
+                            console.log(`Indice venta:${indice_venta}`);
+                            console.log(`Indice compra:${indice_compra}`);
+                            console.log(tallas[indice_venta].value);
+                        }
                     }
-                    if(indice>=5){
-                        indice = indice-5;
-                        console.log(indice)
-                        cambio = true
-                    }
+            }
+            if(typeof indice_compra === 'undefined'){
+                consol.log("no hay compra")
             }
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
@@ -85,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     
     monto.onkeyup = (e) => {
-
         if (monto.value.length > 0){
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
@@ -102,25 +107,22 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log(offer)
 
         try{
-            if(cambio==false){
-                let highest_offer = mins[indice].innerHTML;
-                if(highest_offer=="None" || parseInt(highest_offer)<offer){
-                    check.innerHTML = "Tu oferta será la más alta";
-                }else if(parseInt(highest_offer)>offer){
-                    check.innerHTML = "Tu oferta no es la más alta";
-                }
+            console.log("Oferta de compra")
+            let highest_offer = mins[indice_compra].innerHTML;
+            if(highest_offer=="None" || parseInt(highest_offer)<offer){
+                check.innerHTML = "Tu oferta será la más alta";
+            }else if(parseInt(highest_offer)>offer){
+                check.innerHTML = "Tu oferta no es la más alta";
             }
-
-        }finally{
-            indice = 5-indice;
-            let lowest_offer =maxs[indice].innerHTML;
+        }catch(e){
+            console.log("Oferta de venta")
+            let lowest_offer =maxs[indice_venta].innerHTML;
             if(lowest_offer=="None" || parseInt(lowest_offer)>offer){
                 check.innerHTML = "Tu oferta será la más baja";
             }else if(parseInt(lowest_offer)<offer){
                 check.innerHTML = "Tu oferta no es la más baja";
             }
         }
-
     }
 
 
