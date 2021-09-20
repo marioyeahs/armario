@@ -27,13 +27,13 @@
     <h1>Comprar</h1>
     {% for talla,oferta,min in compras %}
         <br><input type="radio" name="talla" class="tallas"  value="{{ talla }}" checked="checked">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - Oferta de compra mas alta $<span class="min" value={{min}}>{{min}}</span></label>
+        <label for="talla{{ forloop.counter }}">{{ talla }} - Puja mas alta $<span class="min" value={{min}}>{{min}}</span></label>
         <button name="comprar_ahora" class="comprar_ahora" value={{oferta}} formaction="{% url 'mercado:compra' producto.id %}">Comprar ahora $ {{oferta}}</button>
     {% endfor %}
     <h1>Vender</h1>
     {% for talla,oferta,max in ventas %}
         <br><input type="radio" name="talla" class="tallas" value="{{ talla }}">
-        <label for="talla{{ forloop.counter }}">{{ talla }} - Oferta de venta mas baja $<span class="max" value={{max}}>{{max}}</span> </label>
+        <label for="talla{{ forloop.counter }}">{{ talla }} - Oferta mas baja $<span class="max" value={{max}}>{{max}}</span> </label>
         <button name="vender_ahora" class="vender_ahora" value={{oferta}} formaction="{% url 'mercado:venta' producto.id %}">Vender ahora $ {{oferta}}</button>
     {% endfor %}
     <hr>
