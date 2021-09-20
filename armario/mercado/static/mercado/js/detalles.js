@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function(){
     radios.forEach(function(radio){
         radio.onclick = function() {
             check.innerHTML=''
+            monto.select()
             monto.value='';
             for (let i=0; i<tallas.length; i++){
                     if(tallas[i].checked == true){
