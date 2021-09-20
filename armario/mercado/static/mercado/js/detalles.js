@@ -105,7 +105,27 @@ document.addEventListener("DOMContentLoaded", function(){
             submit_oferta_venta.disabled=true;
             submit_oferta_compra.disabled=true;
         }
+        
+        let offer = e.target.value; // la cantidad que se está escribiendo
+        if(localStorage.getItem('indice_compra')){
+            console.log("Oferta de compra")
+            let highest_offer = mins[localStorage.getItem('indice_compra')].innerHTML;
+            if(highest_offer=="None" || parseInt(highest_offer)<offer){
+                check.innerHTML = "Tu oferta será la más alta";
+            }else if(parseInt(highest_offer)>offer){
+                check.innerHTML = "Tu oferta no es la más alta";
+            }
+        }else{
+            console.log("Oferta de venta")
+            let lowest_offer =maxs[localStorage.getItem('indice_venta')].innerHTML;
+            if(lowest_offer=="None" || parseInt(lowest_offer)>offer){
+                check.innerHTML = "Tu oferta será la más baja";
+            }else if(parseInt(lowest_offer)<offer){
+                check.innerHTML = "Tu oferta no es la más baja";
+            }
+        }
     }
+
     // Install input filters.
     setInputFilter(monto, function (value) {
         return /^\d*$/.test(value);
