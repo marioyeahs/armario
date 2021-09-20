@@ -41,8 +41,8 @@
     <input id="intTextBox" name="monto" type="text">
     <p> <span id="oferta"></span> </p>
     </fieldset>
-    <input type="submit" id="oferta_compra" value="Oferta de compra"> 
-    <input type="submit" id="oferta_venta" value="Oferta de venta" formaction="{% url 'mercado:venta' producto.id %}">
+    <input type="submit" id="oferta_compra" value="Comprar"> 
+    <input type="submit" id="oferta_venta" value="Vender" formaction="{% url 'mercado:venta' producto.id %}">
 </form>
 
 
