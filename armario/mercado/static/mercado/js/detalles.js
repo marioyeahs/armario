@@ -112,9 +112,9 @@ document.addEventListener("DOMContentLoaded", function(){
             console.log("Oferta de compra")
             let highest_offer = mins[localStorage.getItem('indice_compra')].innerHTML;
             if(highest_offer=="None" || parseInt(highest_offer)<offer){
-                check.innerHTML = "Tu oferta será la más alta";
+                check.innerHTML = "Tu puja será la más alta";
             }else if(parseInt(highest_offer)>offer){
-                check.innerHTML = "Tu oferta no es la más alta";
+                check.innerHTML = "Tu puja no es la más alta";
             }
         }else{
             console.log("Oferta de venta")
