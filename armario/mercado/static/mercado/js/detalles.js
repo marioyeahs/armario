@@ -59,22 +59,25 @@ document.addEventListener("DOMContentLoaded", function(){
             for (let i=0; i<tallas.length; i++){
                     if(tallas[i].checked == true){
                         if(i<=4){
-                            var indice_compra = i;
-                            indice_venta=null;
-                            console.log(`Indice compra:${indice_compra}`);
-                            console.log(`Indice venta:${indice_venta}`);
-                            console.log(tallas[indice_compra].value);
+                            let indice_compra = i;
+                            localStorage.setItem('indice_compra',indice_compra)
+                            if(localStorage.getItem('indice_venta')){
+                                localStorage.removeItem('indice_venta')
+                            }
+                            console.log(`Indice compra:${localStorage.getItem('indice_compra')}`);
+                            console.log(`Indice venta:${localStorage.getItem('indice_venta')}`);
+                            console.log(tallas[localStorage.getItem('indice_compra')]);
                         }else{
-                            var indice_venta = i-5;
-                            indice_compra=null;
-                            console.log(`Indice venta:${indice_venta}`);
-                            console.log(`Indice compra:${indice_compra}`);
-                            console.log(tallas[indice_venta].value);
+                            let indice_venta = i-5;
+                            localStorage.setItem('indice_venta',indice_venta)
+                            if(localStorage.getItem('indice_compra')){
+                                localStorage.removeItem('indice_compra')
+                            }
+                            console.log(`Indice venta:${localStorage.getItem('indice_venta')}`);
+                            console.log(`Indice compra:${localStorage.getItem('indice_compra')}`);
+                            console.log(tallas[localStorage.getItem('indice_venta')]);
                         }
                     }
-            }
-            if(typeof indice_compra === 'undefined'){
-                consol.log("no hay compra")
             }
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
@@ -102,44 +105,11 @@ document.addEventListener("DOMContentLoaded", function(){
             submit_oferta_venta.disabled=true;
             submit_oferta_compra.disabled=true;
         }
-        
-        let offer = e.target.value; // la cantidad que se está escribiendo
-        console.log(offer)
-
-        try{
-            console.log("Oferta de compra")
-            let highest_offer = mins[indice_compra].innerHTML;
-            if(highest_offer=="None" || parseInt(highest_offer)<offer){
-                check.innerHTML = "Tu oferta será la más alta";
-            }else if(parseInt(highest_offer)>offer){
-                check.innerHTML = "Tu oferta no es la más alta";
-            }
-        }catch(e){
-            console.log("Oferta de venta")
-            let lowest_offer =maxs[indice_venta].innerHTML;
-            if(lowest_offer=="None" || parseInt(lowest_offer)>offer){
-                check.innerHTML = "Tu oferta será la más baja";
-            }else if(parseInt(lowest_offer)<offer){
-                check.innerHTML = "Tu oferta no es la más baja";
-            }
-        }
     }
-
-
     // Install input filters.
     setInputFilter(monto, function (value) {
         return /^\d*$/.test(value);
     });
-
-    // monto.onkeydown = function () {
-    //     console.log("ok!")
-    // }
-
-    // monto.onkeyup = check;
-    
-    
-
-
 });
 
 
