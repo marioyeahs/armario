@@ -65,18 +65,12 @@ document.addEventListener("DOMContentLoaded", function(){
                             if(localStorage.getItem('indice_venta')){
                                 localStorage.removeItem('indice_venta')
                             }
-                            console.log(`Indice compra:${localStorage.getItem('indice_compra')}`);
-                            console.log(`Indice venta:${localStorage.getItem('indice_venta')}`);
-                            console.log(tallas[localStorage.getItem('indice_compra')]);
                         }else{
                             let indice_venta = i-5;
                             localStorage.setItem('indice_venta',indice_venta)
                             if(localStorage.getItem('indice_compra')){
                                 localStorage.removeItem('indice_compra')
                             }
-                            console.log(`Indice venta:${localStorage.getItem('indice_venta')}`);
-                            console.log(`Indice compra:${localStorage.getItem('indice_compra')}`);
-                            console.log(tallas[localStorage.getItem('indice_venta')]);
                         }
                     }
             }
