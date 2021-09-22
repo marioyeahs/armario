@@ -18,6 +18,19 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+    const mins = document.getElementsByClassName("min")
+    const maxs = document.getElementsByClassName("max")
+    for (var i=0;i < mins.length; i++){
+        if(mins.item(i).innerHTML=="None") {
+            mins.item(i).innerHTML = " Sold out! "
+        }
+    }
+    for (var i=0;i < maxs.length; i++){
+        if(maxs.item(i).innerHTML=="None") {
+            maxs.item(i).innerHTML = " Sold out! "
+        }
+    }
+
     
     const submit_oferta_compra = document.getElementById('oferta_compra');
     const submit_oferta_venta = document.getElementById('oferta_venta');
@@ -28,21 +41,11 @@ document.addEventListener("DOMContentLoaded", function(){
     const submits = document.querySelectorAll("button");
     const check = document.getElementById("oferta");
     const tallas = document.getElementsByClassName("tallas")
-    const mins = document.getElementsByClassName("min")
-    const maxs = document.getElementsByClassName("max")
+    
     let indice=0;
     tallas[indice].checked = true;
 
-
     monto.value='';
-
-    document.querySelectorAll('span').forEach(function(price){
-        document.body.onload = function(){
-            if(price.innerHTML==="None"){
-                price.innerHTML="Sold out!"
-            }
-        }
-    });
 
     submit_oferta_venta.disabled=true;
     submit_oferta_compra.disabled=true;
@@ -125,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function(){
     setInputFilter(monto, function (value) {
         return /^\d*$/.test(value);
     });
+
 });
 
 
