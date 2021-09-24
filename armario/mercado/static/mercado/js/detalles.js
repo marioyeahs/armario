@@ -50,13 +50,6 @@ document.addEventListener("DOMContentLoaded", function(){
         boton_compra[i].disabled=true;
         boton_venta[i].disabled=true;
     }
-    for(let i = 0;i<boton_compra.length*2;i++){
-        if(boton_compra[i].innerHTML=="Comprar ahora $ None" || boton_venta[i].innerHTML=="Vender ahora $ None"){
-            boton_compra[i].innerHTML="Sold out!"
-            boton_venta[i].innerHTML="Sold out!"
-
-        }
-    }
 
     radios.forEach(function(radio){
         radio.onclick = function() {
