@@ -21,12 +21,8 @@ document.addEventListener("DOMContentLoaded", function(){
     const mins = document.getElementsByClassName("min")
     const maxs = document.getElementsByClassName("max")
     for (var i=0;i < mins.length; i++){
-        if(mins.item(i).innerHTML=="None") {
+        if(mins.item(i).innerHTML=="None" || maxs.item(i).innerHTML=="None") {
             mins.item(i).innerHTML = " Sold out! "
-        }
-    }
-    for (var i=0;i < maxs.length; i++){
-        if(maxs.item(i).innerHTML=="None") {
             maxs.item(i).innerHTML = " Sold out! "
         }
     }
