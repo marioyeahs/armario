@@ -20,10 +20,10 @@ function setInputFilter(textbox, inputFilter) {
 document.addEventListener("DOMContentLoaded", function(){
     const mins = document.getElementsByClassName("min")
     const maxs = document.getElementsByClassName("max")
-    for (var i=0;i < mins.length; i++){
-        if(mins.item(i).innerHTML=="None" || maxs.item(i).innerHTML=="None") {
-            mins.item(i).innerHTML = " Sold out! "
-            maxs.item(i).innerHTML = " Sold out! "
+    const submits = document.querySelectorAll("button");
+    for(let i = 0;i<submits.length;i++){
+        if(submits[i].value==='None'){
+            submits[i].innerHTML = "Sold out!"
         }
     }
 
@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function(){
     const boton_compra = document.getElementsByClassName('comprar_ahora')
     const boton_venta = document.getElementsByClassName('vender_ahora')
     const radios = document.querySelectorAll("input[type=radio]");
-    const submits = document.querySelectorAll("button");
     const check = document.getElementById("oferta");
     const tallas = document.getElementsByClassName("tallas")
     
@@ -82,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 submits[index].disabled = true;
             }else{
                 submits[index].disabled = false;
-                
             }
         }
     });
