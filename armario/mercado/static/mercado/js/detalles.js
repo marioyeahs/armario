@@ -1,7 +1,5 @@
 function setInputFilter(textbox, inputFilter) {
-[
-    "input","keydown","keyup","mousedown","mouseup","select","contextmenu","drop",
-].forEach(function (event) {
+["input","keydown","keyup","mousedown","mouseup","select","contextmenu","drop",].forEach(function (event) {
     textbox.addEventListener(event, function () {
     if (inputFilter(this.value)) {
         this.oldValue = this.value;
@@ -18,8 +16,8 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 document.addEventListener("DOMContentLoaded", function(){
-    const mins = document.getElementsByClassName("min")
-    const maxs = document.getElementsByClassName("max")
+    const mins = document.getElementsByClassName("min");
+    const maxs = document.getElementsByClassName("max");
     const submits = document.querySelectorAll("button");
     for(let i = 0;i<submits.length;i++){
         if(submits[i].value==='None'){
@@ -45,10 +43,18 @@ document.addEventListener("DOMContentLoaded", function(){
     submit_oferta_venta.disabled=true;
     submit_oferta_compra.disabled=true;
 
-    for(let i = 0;i<boton_compra.length;i++){
-        boton_compra[i].disabled=true;
-        boton_venta[i].disabled=true;
+    function disable_BuySell_button(){
+        for(let i = 0;i<boton_compra.length;i++){
+            boton_compra[i].disabled=true;
+            boton_venta[i].disabled=true;
+        }
     }
+
+    disable_BuySell_button();
+    // for(let i = 0;i<boton_compra.length;i++){
+    //     boton_compra[i].disabled=true;
+    //     boton_venta[i].disabled=true;
+    // }
 
     radios.forEach(function(radio){
         radio.onclick = function() {
@@ -72,10 +78,11 @@ document.addEventListener("DOMContentLoaded", function(){
                         }
                     }
             }
-            for(let i = 0;i<boton_compra.length;i++){
-                boton_compra[i].disabled=true;
-                boton_venta[i].disabled=true;
-            }
+            disable_BuySell_button();
+            // for(let i = 0;i<boton_compra.length;i++){
+            //     boton_compra[i].disabled=true;
+            //     boton_venta[i].disabled=true;
+            // }
             let index = Array.prototype.indexOf.call(radios,radio);
             if(submits[index].value === 'None'){
                 submits[index].disabled = true;
@@ -87,10 +94,11 @@ document.addEventListener("DOMContentLoaded", function(){
     
     monto.onkeyup = (e) => {
         if (monto.value.length > 0){
-            for(let i = 0;i<boton_compra.length;i++){
-                boton_compra[i].disabled=true;
-                boton_venta[i].disabled=true;
-            }
+            disable_BuySell_button();
+            // for(let i = 0;i<boton_compra.length;i++){
+            //     boton_compra[i].disabled=true;
+            //     boton_venta[i].disabled=true;
+            // }
             submit_oferta_venta.disabled=false;
             submit_oferta_compra.disabled=false;
         }else{
