@@ -66,6 +66,11 @@ class IndexListView(ListView):
         context = super(IndexListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
         context['marcas']=Marca.objects.all()
+        depto=Mercancia.DEPTO
+        deptos=[]
+        for i in range(len(depto)):
+            deptos+=[depto[i][1]]
+        context['deptos']=deptos
 
         return context
 
