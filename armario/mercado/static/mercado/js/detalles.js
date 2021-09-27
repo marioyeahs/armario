@@ -52,6 +52,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     radios.forEach(function(radio){
         radio.onclick = function() {
+            submit_oferta_venta.disabled=true;
+            submit_oferta_compra.disabled=true;
             check.innerHTML=''
             monto.select()
             monto.value='';
@@ -86,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     
     monto.onkeyup = (e) => {
-        if (monto.value.length > 0){
+        if (monto.value!==''){
             for(let i = 0;i<boton_compra.length;i++){
                 boton_compra[i].disabled=true;
                 boton_venta[i].disabled=true;
