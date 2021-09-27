@@ -18,3 +18,7 @@ node_modules
 
 # Ignora las imagenes de la app mercado
 ./mercado/static/mercado/img
+
+__pycache__
+*.swp
+*.sqlite3
