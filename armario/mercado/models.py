@@ -32,7 +32,7 @@ class Mercancia(models.Model):
     DEPTO =(
         ('CZ','Calzado'),
         ('RP','Ropa'),
-        ('JG','Juguete'),
+        ('RJ','Reloj'),
         ('CL','Coleccionable')
     )
     size_type = models.CharField(verbose_name="Miembro",max_length=2, choices=SIZE_TYPE)
