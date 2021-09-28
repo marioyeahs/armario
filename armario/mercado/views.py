@@ -67,17 +67,18 @@ class IndexListView(ListView):
         # Create any data and add it to the context
         context['marcas']=Marca.objects.all()
         depto=Mercancia.DEPTO
-        context['deptos']=[]
+        deptos=[]
         deptos_key=[]
         for i in range(len(depto)):
             deptos_key+=[depto[i][0]]
-            context['deptos']+=[depto[i][1]]
+            deptos+=[depto[i][1]]
         
-        context['products_by_department']=[]
+        products_by_department=[]
         for i in deptos_key:
-            context['products_by_department']+=[Mercancia.objects.filter(depto=i)]
+            products_by_department+=[Mercancia.objects.filter(depto=i)]
         
-        context['key_deptos']=zip(deptos_key,context['products_by_department'])
+        context['key_deptos']=zip(deptos_key,products_by_department)
+        context['value_deptos']=zip(deptos_key,deptos)
 
         return context
 
