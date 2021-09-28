@@ -4,3 +4,13 @@ function show_products(key){
     });
     document.querySelector(`#${key}`).style.display = 'block';
 }
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    document.querySelectorAll('button').forEach(button => {
+        button.onclick = function() {
+            document.getElementById('productos').style.display = 'none';
+            show_products(this.dataset.key);
+        }
+    })
+});
