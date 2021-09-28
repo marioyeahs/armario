@@ -77,7 +77,7 @@ class IndexListView(ListView):
         for i in deptos_key:
             context['products_by_department']+=[Mercancia.objects.filter(depto=i)]
         
-        # key_deptos=zip(deptos_key,context['products_by_department'])
+        context['key_deptos']=zip(deptos_key,context['products_by_department'])
 
         return context
 
