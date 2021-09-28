@@ -27,7 +27,8 @@ class Mercancia(models.Model):
         ('GS','Grade School'),
         ('PS','Preschool'),
         ('IF','Infant'),
-        ('TD','Toddler')
+        ('TD','Toddler'),
+        ('NA','NotApply')
     )
     DEPTO =(
         ('CZ','Calzado'),
