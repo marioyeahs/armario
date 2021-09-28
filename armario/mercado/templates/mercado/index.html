@@ -1,5 +1,14 @@
 {% extends "mercado/layout.html" %}
 
+{% load static %}
+
+{% block head %}
+    <script type="text/javascript" src="{% static 'mercado/js/index.js' %}"></script>
+    <style>
+        
+    </style>
+{% endblock %}
+
 {% block body %}
 
     Marcas 
@@ -9,19 +18,20 @@
         {% endfor %}
     </ul>
 
-        {% for i in deptos %}
-            <button data-department={{i}}>{{i}}</button>
+        {% for key,depto in value_deptos %}
+            <button data-key={{key}}>{{depto}}</button>
         {% endfor %}
 
-
-    <h1>Productos</h1>
-    <ul>
-        {% for producto in mercancia_list %}
-            <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
-        {% empty %}
-            <li>No hay productos de mujer</li>
-        {% endfor %}
-    </ul>
+    <div id="productos">
+        <h1>Productos</h1>
+        <ul>
+                {% for producto in mercancia_list %}
+                    <li> <a href="{{ producto.get_absolute_url }}">{{ producto.modelo }}</a> </li>
+                {% empty %}
+                    <li>No hay productos de mujer</li>
+                {% endfor %}
+            </ul>
+    </div >
 
     {% for key,products in key_deptos %}
         <div id={{key}}>
