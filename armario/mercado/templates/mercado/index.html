@@ -9,6 +9,11 @@
         {% endfor %}
     </ul>
 
+        {% for i in deptos %}
+            <button data-department={{i}}>{{i}}</button>
+        {% endfor %}
+
+
     <h1>Productos</h1>
     <ul>
         {% for producto in mercancia_list %}
@@ -17,5 +22,13 @@
             <li>No hay productos de mujer</li>
         {% endfor %}
     </ul>
+
+    {% for key,products in key_deptos %}
+        <div id={{key}}>
+            {% for product in products %}
+                {{ product}}
+            {% endfor %}
+        </div>
+    {% endfor %}
 
 {% endblock %}
