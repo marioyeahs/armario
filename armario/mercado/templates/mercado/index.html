@@ -5,13 +5,15 @@
 {% block head %}
     <script type="text/javascript" src="{% static 'mercado/js/index.js' %}"></script>
     <style>
-        
+        .products_by_department{
+            display: none;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
 
-    Marcas 
+    <h1>Marcas</h1>
     <ul>
         {% for marca in marcas %}
             <li><a href="{% url 'mercado:marca' marca %}" >{{marca}}</a></li>
@@ -34,7 +36,7 @@
     </div >
 
     {% for key,products in key_deptos %}
-        <div id={{key}}>
+        <div class="products_by_department" id={{key}}>
             <ul>
             {% for product in products %}
                 <li>{{ product}}</li>
