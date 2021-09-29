@@ -35,9 +35,12 @@
 
     {% for key,products in key_deptos %}
         <div id={{key}}>
+            <ul>
             {% for product in products %}
-                {{ product}}
+                <li>{{ product}}</li>
             {% endfor %}
+            </ul>
+            
         </div>
     {% endfor %}
 
