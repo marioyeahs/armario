@@ -14,11 +14,11 @@
 {% block body %}
 
     <h1>Marcas</h1>
-    <ul>
-        {% for marca in marcas %}
-            <li><a href="{% url 'mercado:marca' marca %}" >{{marca}}</a></li>
-        {% endfor %}
-    </ul>
+    {% for marca in marcas %}
+        <button data-marca={{marca}}>{{marca}}</button>
+    {% endfor %}
+
+    <div id="content"></div>
 
         {% for key,depto in value_deptos %}
             <button data-key={{key}}>{{depto}}</button>
