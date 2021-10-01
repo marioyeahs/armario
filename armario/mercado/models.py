@@ -16,6 +16,8 @@ class Marca(models.Model):
     nombre = models.CharField(max_length=255)
     def __str__(self):
         return self.nombre
+    def get_absolute_url(self):
+        return reverse('mercado:marca', kwargs={'nombre':self.nombre})
     
 
 class Mercancia(models.Model):
