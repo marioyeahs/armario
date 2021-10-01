@@ -65,7 +65,7 @@ class IndexListView(ListView):
         # Call the base implementation first to get the context
         context = super(IndexListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
-        context['marcas']=Marca.objects.all()
+        context['marcas']=Marca.objects.all().values_list('nombre',flat=True)
         depto=Mercancia.DEPTO
         deptos=[]
         deptos_key=[]
@@ -453,5 +453,12 @@ class MercanciaListView(ListView):
     context_object_name = 'mercancia_list'
     template_name = 'mercado/mercancia_list.html'
 
+def marca(request,marca):
+    marca = Marca.objects.get(nombre=marca).id
+    if marca in Marca.objects.all().values_list('id',flat=True):
+        productos=Mercancia.objects.filter(marca=marca)
+        return HttpResponse(productos)
+    else:
+        raise Http404("No contamos con tal marca")
 
 
