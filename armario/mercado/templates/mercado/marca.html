@@ -1,0 +1,7 @@
+<h1>{{marca}}</h1>
+
+<ul>
+    {% for producto in productos %}
+        <li><a href="{{ producto.get_absolute_url}}">{{producto}}</a></li>
+    {% endfor %}
+</ul>
