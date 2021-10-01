@@ -457,7 +457,11 @@ def marca(request,marca):
     marca = Marca.objects.get(nombre=marca).id
     if marca in Marca.objects.all().values_list('id',flat=True):
         productos=Mercancia.objects.filter(marca=marca)
-        return HttpResponse(productos)
+        marca=Marca.objects.get(id=marca)
+        return render(request,"mercado/marca.html",{
+            "productos":productos,
+            "marca":marca,
+            })
     else:
         raise Http404("No contamos con tal marca")
 
