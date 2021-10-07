@@ -18,11 +18,12 @@
         <button data-marca={{marca}}>{{marca}}</button>
     {% endfor %}
 
+    {% for depto in deptos %}
+        <button data-depto={{depto.0}}>{{depto.1}}</button>
+    {% endfor %}
+    
+    <!-- this div is written by a fetch -->
     <div id="content"></div>
-
-        {% for key,depto in value_deptos %}
-            <button data-key={{key}}>{{depto}}</button>
-        {% endfor %}
 
     <div id="productos">
         <h1>Productos</h1>
