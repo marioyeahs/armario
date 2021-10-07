@@ -28,4 +28,5 @@ urlpatterns = [
     path('productos/<str:marca>/', views.marca, name='marca'),
     path('mercancias/', MercanciaListView.as_view(), name='mercancias'),
     
+    path('departamento/<str:department>/', views.department, name='department'),
 ]
