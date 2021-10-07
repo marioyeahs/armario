@@ -22,8 +22,7 @@
         <button data-depto={{depto.0}}>{{depto.1}}</button>
     {% endfor %}
     
-    <!-- this div is written by a fetch -->
-    <div id="content"></div>
+    <div id="products_by_brand"></div>
 
     <div id="productos">
         <h1>Productos</h1>
@@ -36,15 +35,6 @@
             </ul>
     </div >
 
-    {% for key,products in key_deptos %}
-        <div class="products_by_department" id={{key}}>
-            <ul>
-            {% for product in products %}
-                <li>{{ product}}</li>
-            {% endfor %}
-            </ul>
-            
-        </div>
-    {% endfor %}
+    <div id="products_by_department"></div>
 
 {% endblock %}
