@@ -452,6 +452,9 @@ def marca(request,marca):
             })
     else:
         raise Http404("No contamos con tal marca")
-                                    
+
+def department(request,department):
+    productos = Mercancia.objects.filter(depto=department)
+    return render(request,"mercado/department.html",{'productos':productos})
 
 
