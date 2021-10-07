@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail, send_mass_mail
-from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseNotModified, HttpResponsePermanentRedirect, HttpResponseNotAllowed, HttpResponseNotFound
+from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseNotModified, HttpResponsePermanentRedirect
 from django.http import Http404,HttpResponseRedirect, HttpResponseNotAllowed, HttpResponseNotFound
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404, redirect
@@ -12,7 +12,7 @@ from mercado.forms import RegisterForm
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
-from datetime import datetime
+from datetime import datetime 
 
 # Create your views here.
 from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas, Successful_offer
@@ -65,20 +65,8 @@ class IndexListView(ListView):
         # Call the base implementation first to get the context
         context = super(IndexListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
-        context['marcas']=Marca.objects.all().values_list('nombre',flat=True)
-        depto=Mercancia.DEPTO
-        deptos=[]
-        deptos_key=[]
-        for i in range(len(depto)):
-            deptos_key+=[depto[i][0]]
-            deptos+=[depto[i][1]]
-        
-        products_by_department=[]
-        for i in deptos_key:
-            products_by_department+=[Mercancia.objects.filter(depto=i)]
-        
-        context['key_deptos']=zip(deptos_key,products_by_department)
-        context['value_deptos']=zip(deptos_key,deptos)
+        context['marcas'] = Marca.objects.all().values_list('nombre',flat=True)
+        context['deptos'] = Mercancia.DEPTO
 
         return context
 
@@ -458,11 +446,12 @@ def marca(request,marca):
     if marca in Marca.objects.all().values_list('id',flat=True):
         productos=Mercancia.objects.filter(marca=marca)
         marca=Marca.objects.get(id=marca)
-        return render(request,"mercado/marca.html",{
+        return render(request,"mercado/productos_por_marca.html",{
             "productos":productos,
             "marca":marca,
             })
     else:
         raise Http404("No contamos con tal marca")
+                                    
 
 
