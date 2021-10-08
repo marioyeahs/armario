@@ -442,19 +442,25 @@ class MercanciaListView(ListView):
     template_name = 'mercado/mercancia_list.html'
 
 def marca(request,marca):
-    marca = Marca.objects.get(nombre=marca).id
-    if marca in Marca.objects.all().values_list('id',flat=True):
-        productos=Mercancia.objects.filter(marca=marca)
-        marca=Marca.objects.get(id=marca)
+    name = Marca.objects.get(nombre=marca).id
+    if name in Marca.objects.all().values_list('id',flat=True):
+        productos=Mercancia.objects.filter(marca=name)
+        name=Marca.objects.get(id=name)
         return render(request,"mercado/productos_por_marca.html",{
             "productos":productos,
-            "marca":marca,
+            "name":name,
             })
     else:
         raise Http404("No contamos con tal marca")
 
 def department(request,department):
+    for i,deptartmento in enumerate(Mercancia.DEPTO):
+        if department in Mercancia.DEPTO[i]:
+            name = Mercancia.DEPTO[i][1]
     productos = Mercancia.objects.filter(depto=department)
-    return render(request,"mercado/department.html",{'productos':productos})
+    return render(request,"mercado/productos_por_marca.html",{
+        'productos':productos,
+        'name':name
+        })
 
 
