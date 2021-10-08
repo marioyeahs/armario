@@ -446,9 +446,9 @@ def marca(request,marca):
     if name in Marca.objects.all().values_list('id',flat=True):
         productos=Mercancia.objects.filter(marca=name)
         name=Marca.objects.get(id=name)
-        return render(request,"mercado/productos_por_marca.html",{
-            "productos":productos,
-            "name":name,
+        return render(request,"mercado/products_by_type.html",{
+            'productos':productos,
+            'type':name,
             })
     else:
         raise Http404("No contamos con tal marca")
@@ -458,9 +458,9 @@ def department(request,department):
         if department in Mercancia.DEPTO[i]:
             name = Mercancia.DEPTO[i][1]
     productos = Mercancia.objects.filter(depto=department)
-    return render(request,"mercado/productos_por_marca.html",{
+    return render(request,"mercado/products_by_type.html",{
         'productos':productos,
-        'name':name
+        'type':name
         })
 
 
