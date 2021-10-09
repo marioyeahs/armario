@@ -371,17 +371,6 @@ def oferta_venta_enviada(request,producto_id):
         })
 
 @login_required
-def mis_ofertas(request):
-    p = User.objects.get(pk=request.user.pk)
-    ofertas_compra = Oferta_compra.objects.filter(comprador=p).order_by('-fecha')
-    ofertas_venta = Oferta_venta.objects.filter(comprador=p).order_by('-fecha')
-
-    return render(request, 'mercado/mis_ofertas.html',{
-        'ofertas_compra':ofertas_compra,
-        'ofertas_venta':ofertas_venta,
-    })
-
-@login_required
 def eliminar_compra(request,oferta_id):
     oferta = get_object_or_404(Oferta_compra, pk=oferta_id)
     oferta.delete()
@@ -432,12 +421,9 @@ class MarcaListView(ListView):
         return Mercancia.objects.filter(marca=self.marca)
 
     def get_context_data(self, **kwargs):
-        context = super(MarcaListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['type']=self.marca
         return context
-
-# class MyOffersListView(ListView):
-#     self.request.user
 
 class ByDepartmentListView(ListView):
     context_object_name = 'productos'
@@ -447,7 +433,8 @@ class ByDepartmentListView(ListView):
         return Mercancia.objects.filter(depto=self.kwargs['department'])
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(ByDepartmentListView,self).get_context_data(**kwargs)
         context['type'] = self.kwargs['department']
+        return context
 
 
