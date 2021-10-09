@@ -439,26 +439,15 @@ class MarcaListView(ListView):
 # class MyOffersListView(ListView):
 #     self.request.user
 
-# def marca(request,marca):
-#     name = Marca.objects.get(nombre=marca).id
-#     if name in Marca.objects.all().values_list('id',flat=True):
-#         productos=Mercancia.objects.filter(marca=name)
-#         name=Marca.objects.get(id=name)
-#         return render(request,"mercado/products_by_type.html",{
-#             'productos':productos,
-#             'type':name,
-#             })
-#     else:
-#         raise Http404("No contamos con tal marca")
+class ByDepartmentListView(ListView):
+    context_object_name = 'productos'
+    template_name = 'mercado/products_by_type.html'
 
-def department(request,department):
-    for i,deptartmento in enumerate(Mercancia.DEPTO):
-        if department in Mercancia.DEPTO[i]:
-            name = Mercancia.DEPTO[i][1]
-    productos = Mercancia.objects.filter(depto=department)
-    return render(request,"mercado/products_by_type.html",{
-        'productos':productos,
-        'type':name
-        })
+    def get_queryset(self):
+        return Mercancia.objects.filter(depto=self.kwargs['department'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['type'] = self.kwargs['department']
 
 
