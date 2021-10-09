@@ -425,33 +425,31 @@ class MercanciaListView(ListView):
     template_name = 'mercado/mercancia_list.html'
 
 class MarcaListView(ListView):
-    model = Marca
-    #we can override the get_queryset() method to change the list of records returned.
+    context_object_name = 'productos'
+    template_name = 'mercado/products_by_type.html'
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
-        return Marca.objects.filter(nombre=self.marca)
+        return Mercancia.objects.filter(marca=self.marca)
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super(MarcaListView, self).get_context_data(**kwargs)
-        # Add in the publisher
-        context['productos'] = Mercancia.objects.filter(marca=self.marca)
-        context['marca']=self.marca
-        context['marcas']=Marca.objects.all()
+        context['type']=self.marca
         return context
 
+# class MyOffersListView(ListView):
+#     self.request.user
 
-def marca(request,marca):
-    name = Marca.objects.get(nombre=marca).id
-    if name in Marca.objects.all().values_list('id',flat=True):
-        productos=Mercancia.objects.filter(marca=name)
-        name=Marca.objects.get(id=name)
-        return render(request,"mercado/products_by_type.html",{
-            'productos':productos,
-            'type':name,
-            })
-    else:
-        raise Http404("No contamos con tal marca")
+# def marca(request,marca):
+#     name = Marca.objects.get(nombre=marca).id
+#     if name in Marca.objects.all().values_list('id',flat=True):
+#         productos=Mercancia.objects.filter(marca=name)
+#         name=Marca.objects.get(id=name)
+#         return render(request,"mercado/products_by_type.html",{
+#             'productos':productos,
+#             'type':name,
+#             })
+#     else:
+#         raise Http404("No contamos con tal marca")
 
 def department(request,department):
     for i,deptartmento in enumerate(Mercancia.DEPTO):
