@@ -25,7 +25,6 @@ urlpatterns = [
     path('<int:producto_id>/oferta_compra/', views.oferta_compra, name='oferta_compra'),
     path('<int:producto_id>/oferta_comprada/', views.oferta_comprada, name='oferta_comprada'),
     path('productos/<marca>/', MarcaListView.as_view(), name='marca'),
-    path('productos/<department>/', ByDepartmentListView.as_view(), name='department'),
+    path('departamento/<department>/', ByDepartmentListView.as_view(), name='department'),
     path('mercancias/', MercanciaListView.as_view(), name='mercancias'),
-    path('departamento/<str:department>/', views.department, name='department'),
-]
+    ]
