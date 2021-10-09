@@ -13,9 +13,10 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from datetime import datetime 
+from django.utils.decorators import method_decorator
 
 # Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas, Successful_offer
+from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas
 
 def fam_member(type,dept):
     sizes = []
@@ -437,4 +438,15 @@ class ByDepartmentListView(ListView):
         context['type'] = self.kwargs['department']
         return context
 
+@method_decorator(login_required, name='dispatch')
+class MyOffersListView(ListView):
+    context_object_name = 'successfull_offers'
+    template_name='mercado/mis_ofertas.html'
+    def get_queryset(self):
+        return Ofertas_compradas.objects.filter(comprador=self.request.user) | Ofertas_compradas.objects.filter(vendedor=self.request.user)
 
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['buy_offers'] = Oferta_compra.objects.filter(comprador=self.request.user)
+        context['sell_offers'] = Oferta_venta.objects.filter(comprador=self.request.user)
+        return context
