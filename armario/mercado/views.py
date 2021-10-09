@@ -395,23 +395,6 @@ def eliminar_venta(request,oferta_id):
 
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
-
-class MarcaListView(ListView):
-    model = Marca
-    #we can override the get_queryset() method to change the list of records returned.
-    def get_queryset(self):
-        self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
-        return Marca.objects.filter(nombre=self.marca)
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(MarcaListView, self).get_context_data(**kwargs)
-        # Add in the publisher
-        context['productos'] = Mercancia.objects.filter(marca=self.marca)
-        context['marca']=self.marca
-        context['marcas']=Marca.objects.all()
-        return context
-
 class MasVendidosListView(ListView):
     model=Oferta_compra
     template_name = 'mercado/mas_vendidos.html'
@@ -440,6 +423,23 @@ class MercanciaListView(ListView):
     model = Mercancia
     context_object_name = 'mercancia_list'
     template_name = 'mercado/mercancia_list.html'
+
+class MarcaListView(ListView):
+    model = Marca
+    #we can override the get_queryset() method to change the list of records returned.
+    def get_queryset(self):
+        self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
+        return Marca.objects.filter(nombre=self.marca)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(MarcaListView, self).get_context_data(**kwargs)
+        # Add in the publisher
+        context['productos'] = Mercancia.objects.filter(marca=self.marca)
+        context['marca']=self.marca
+        context['marcas']=Marca.objects.all()
+        return context
+
 
 def marca(request,marca):
     name = Marca.objects.get(nombre=marca).id
