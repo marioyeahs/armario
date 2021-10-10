@@ -414,7 +414,7 @@ class MercanciaListView(ListView):
     context_object_name = 'mercancia_list'
     template_name = 'mercado/mercancia_list.html'
 
-class MarcaListView(ListView):
+class ByBrandListView(ListView):
     context_object_name = 'productos'
     template_name = 'mercado/products_by_type.html'
     def get_queryset(self):
@@ -435,7 +435,9 @@ class ByDepartmentListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ByDepartmentListView,self).get_context_data(**kwargs)
-        context['type'] = self.kwargs['department']
+        for depto in Mercancia.DEPTO:
+            if self.kwargs['department'] in depto:
+                context['type'] = depto[1]
         return context
 
 @method_decorator(login_required, name='dispatch')
