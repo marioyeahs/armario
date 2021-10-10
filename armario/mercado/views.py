@@ -37,20 +37,12 @@ def fam_member(type,dept):
         sizes=['XS','S','M','L','XL','XXL']
 
     return sizes
+
 def add_checkout(request):
     print(request.session['monto'])
     request.session['comision'] = round(.07*request.session['monto'],2)
     request.session['total']=request.session['monto']+200+request.session['comision']  
 
-    #checar si la oferta es válida
-def check_offer(usuario, size, producto, request):
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
-    print(oferta_duplicada)
-    if oferta_duplicada:
-        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
-        print("!!!!     Oferta de venta duplicada   !!!!")
-        
-        return HttpResponseRedirect(reverse(producto))
 def discount_comission(request):
     print(request.session['monto'])
     request.session['comision']=round(.07*request.session['monto'],2)
@@ -59,8 +51,6 @@ def discount_comission(request):
 class IndexListView(ListView):
     model = Mercancia
     template_name = "mercado/index.html"
-    # def get_queryset(self):
-    #     return Mercancia.objects.filter(size_type='W')
     
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
@@ -385,35 +375,6 @@ def eliminar_venta(request,oferta_id):
 
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
-class MasVendidosListView(ListView):
-    model=Oferta_compra
-    template_name = 'mercado/mas_vendidos.html'
-    ofertas=[]
-    for i in Mercancia.objects.all():
-        ofertas+=[Oferta_compra.objects.filter(articulo=i)]
-    
-    mas_vendidos = {}
-
-    for i,of in enumerate(ofertas):
-        mas_vendidos.update({len(of):of})
-    
-    x=sorted(mas_vendidos,reverse=True)
-    
-    def get_context_data(self,**kwargs):
-        context = super().get_context_data(**kwargs)
-        context['mas_vendidos']=self.x
-        context['ofertas']=self.ofertas
-
-        return context
-
-class MercanciaDetailView(DetailView):
-    model = Mercancia
-
-class MercanciaListView(ListView):
-    model = Mercancia
-    context_object_name = 'mercancia_list'
-    template_name = 'mercado/mercancia_list.html'
-
 class ByBrandListView(ListView):
     context_object_name = 'productos'
     template_name = 'mercado/products_by_type.html'
@@ -445,10 +406,14 @@ class MyOffersListView(ListView):
     context_object_name = 'successfull_offers'
     template_name='mercado/mis_ofertas.html'
     def get_queryset(self):
-        return Ofertas_compradas.objects.filter(comprador=self.request.user) | Ofertas_compradas.objects.filter(vendedor=self.request.user)
+        return Ofertas_compradas.objects.filter(comprador=self.request.user).union(Ofertas_compradas.objects.filter(vendedor=self.request.user))
 
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         context['buy_offers'] = Oferta_compra.objects.filter(comprador=self.request.user)
         context['sell_offers'] = Oferta_venta.objects.filter(comprador=self.request.user)
         return context
+
+class ProfileDetailView(DetailView):
+    model = Cliente
+
