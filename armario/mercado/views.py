@@ -415,5 +415,6 @@ class MyOffersListView(ListView):
         return context
 
 class ProfileDetailView(DetailView):
-    model = Cliente
+    def get_object(self):
+        return get_object_or_404(Cliente, pk=self.request.user.pk)
 
