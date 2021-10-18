@@ -385,6 +385,7 @@ class ByBrandListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type']=self.marca
+        context['all']=Marca.objects.exclude(pk=self.marca.pk)
         return context
 
 class ByDepartmentListView(ListView):
@@ -396,9 +397,12 @@ class ByDepartmentListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ByDepartmentListView,self).get_context_data(**kwargs)
+        context['all']=[]
         for depto in Mercancia.DEPTO:
+            context['all'].append(depto[1])
             if self.kwargs['department'] in depto:
                 context['type'] = depto[1]
+        context['all'].remove(context['type'])
         return context
 
 @method_decorator(login_required, name='dispatch')
