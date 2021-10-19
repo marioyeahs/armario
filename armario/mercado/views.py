@@ -112,7 +112,7 @@ def detalles(request,pk):
     
     for i in Mercancia.DEPTO:
         if producto.depto in i:
-            depto=i[1]
+            depto=i
 
     return render(request,"mercado/detalles.html", {
         'producto':producto,
