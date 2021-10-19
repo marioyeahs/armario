@@ -109,12 +109,17 @@ def detalles(request,pk):
     
     compras=zip(tallas,ofertas_venta,ofertas_compra)
     ventas=zip(tallas,ofertas_compra, ofertas_venta)
+    
+    for i in Mercancia.DEPTO:
+        if producto.depto in i:
+            depto=i[1]
 
     return render(request,"mercado/detalles.html", {
         'producto':producto,
         'tallas':tallas,
         'ventas':ventas,
         'compras':compras,
+        'depto': depto
         })  
 
 def compra(request, producto_id):
@@ -385,7 +390,7 @@ class ByBrandListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type']=self.marca
-        context['all']=Marca.objects.exclude(pk=self.marca.pk)
+        context['brands']=Marca.objects.exclude(pk=self.marca.pk)
         return context
 
 class ByDepartmentListView(ListView):
@@ -402,7 +407,7 @@ class ByDepartmentListView(ListView):
             context['all'].append(depto[1])
             if self.kwargs['department'] in depto:
                 context['type'] = depto[1]
-        context['all'].remove(context['type'])
+        # context['departments'].remove(context['type'])
         return context
 
 @method_decorator(login_required, name='dispatch')
