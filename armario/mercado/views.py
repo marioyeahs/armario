@@ -381,7 +381,7 @@ def eliminar_venta(request,oferta_id):
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
 class ByBrandListView(ListView):
-    context_object_name = 'productos'
+    context_object_name = 'list' #list of brands
     template_name = 'mercado/products_by_type.html'
     def get_queryset(self):
         self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
@@ -394,7 +394,7 @@ class ByBrandListView(ListView):
         return context
 
 class ByDepartmentListView(ListView):
-    context_object_name = 'productos'
+    context_object_name = 'list' #list of departments
     template_name = 'mercado/products_by_type.html'
 
     def get_queryset(self):
