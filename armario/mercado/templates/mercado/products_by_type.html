@@ -1,7 +1,6 @@
-<h1>{{type}}</h1>
-
-<ul>
-    {% for producto in productos %}
-        <li><a href="{{ producto.get_absolute_url}}">{{producto}}</a></li>
-    {% endfor %}
-</ul>
+    <h1>{{type}}</h1>
+    <ul>
+        {% for item in list %}
+            <li><a href="{{ item.get_absolute_url}}">{{item}}</a></li>
+        {% endfor %}
+    </ul>
