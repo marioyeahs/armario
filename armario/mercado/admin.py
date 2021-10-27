@@ -4,18 +4,16 @@ from django.contrib.auth.models import User
 
 # Register your models here.
 
-from mercado.models import Oferta_compra, Mercancia, Marca, Cliente, Oferta_venta, Ofertas_compradas, Successful_offer
-
-admin.site.register(Oferta_compra)
-admin.site.register(Oferta_venta)
-admin.site.register(Marca)
+from mercado.models import BuyOffer, Product, Brand, Client, SellOffer, SuccessfulOffer
+admin.site.register(BuyOffer)
+admin.site.register(SellOffer)
+admin.site.register(Brand)
 # admin.site.register(Cliente)
-admin.site.register(Mercancia)
-admin.site.register(Ofertas_compradas)
-admin.site.register(Successful_offer)
+admin.site.register(Product)
+admin.site.register(SuccessfulOffer)
 
 class ClienteInLine(admin.StackedInline):
-    model = Cliente
+    model = Client
     can_delete = False
     verbose_name_plural = 'clientes'
 
