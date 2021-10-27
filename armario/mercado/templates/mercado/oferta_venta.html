@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<h1>Estás por aceptar la oferta en {{producto.modelo}}</h1>
+<h1>Estás por aceptar la oferta en {{producto.model}}</h1>
 
 <form action="{% url 'mercado:oferta_vendida' producto.id %}" method="POST">
     {% csrf_token %}

@@ -17,10 +17,10 @@
 </ul>
 {% endif %}
 
-<h1><a href="{% url 'mercado:marca' producto.marca %}">{{producto.marca}}</a> | {{producto.modelo}}</h1>
+<h1><a href="{% url 'mercado:marca' producto.brand %}">{{producto.brand}}</a> | {{producto.model}}</h1>
 <h2><a href="{% url 'mercado:department' depto.0 %}">{{depto.1}}</a></h2>
 
-<img src="{% static 'mercado/img/' %}{{producto.modelo}}.jpg" alt="{{producto.modelo}}">
+<img src="{% static 'mercado/img/' %}{{producto.model}}.jpg" alt="{{producto.model}}">
 
 <form id="detailsForm" action="{% url 'mercado:compra' producto.id %}" method="POST"> 
     {% csrf_token %}
