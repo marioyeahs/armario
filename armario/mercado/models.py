@@ -6,23 +6,22 @@ from django.utils.translation import gettext as _
 
 # Create your models here.
 
-class Cliente(models.Model):
+class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    numero = models.IntegerField()
+    number = models.IntegerField()
     def __str__(self):
-        return f"{self.user.username} - Celular:{self.numero}"
+        return f"{self.user.username} - Celular:{self.number}"
 
-class Marca(models.Model):
-    nombre = models.CharField(max_length=255)
+class Brand(models.Model):
+    name = models.CharField(max_length=255)
     def __str__(self):
-        return self.nombre
+        return self.name
     def get_absolute_url(self):
-        return reverse('mercado:marca', kwargs={'nombre':self.nombre})
-    
+        return reverse('mercado:marca', kwargs={'name':self.name})
 
-class Mercancia(models.Model):
-    modelo = models.CharField(max_length=255)
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE, related_name="brand")
+class Product(models.Model):
+    model = models.CharField(max_length=255)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     SIZE_TYPE = (
         ('M','Men'), 
         ('W','Women'),
@@ -32,69 +31,68 @@ class Mercancia(models.Model):
         ('TD','Toddler'),
         ('NA','NotApply')
     )
-    DEPTO =(
-        ('CZ','Calzado'),
-        ('RP','Ropa'),
-        ('RJ','Reloj'),
+    DEPT =(
+        ('SH','Calzado'),
+        ('CL','Ropa'),
+        ('WT','Reloj'),
         ('CL','Coleccionable')
     )
     size_type = models.CharField(verbose_name="Miembro",max_length=2, choices=SIZE_TYPE)
-    depto = models.CharField(verbose_name="Departamento",max_length=2, choices=DEPTO)
+    dept = models.CharField(verbose_name="Departamento",max_length=2, choices=DEPT)
     def __str__(self):
-        return f"{self.marca} {self.modelo}."
+        return f"{self.brand} {self.model}."
 
     def get_absolute_url(self):
         return reverse('mercado:detalles', kwargs={'pk':self.pk})
-        
 
-class Oferta_compra(models.Model):
-    monto = models.IntegerField()
-    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
-    talla = models.CharField(max_length=5, null=True,blank=True)
-    articulo = models.ForeignKey(Mercancia, on_delete=models.RESTRICT)
-    fecha = models.DateTimeField()
+class BuyOffer(models.Model):
+    offer = models.IntegerField()
+    buyer = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client')
+    size = models.CharField(max_length=5, null=True,blank=True)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT, related_name="product")
+    date = models.DateTimeField()
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
+        return f"Puja en {self.product.model} {self.size} cm - ${self.offer}.00 mxn | {self.buyer}"
     
     def oferta_mayor_envio(self):
         """verify if the offer is greater than the deilvery cost"""
-        return self.monto > 200
+        return self.offer > 200
 
-class Oferta_venta(models.Model):
-    monto = models.IntegerField()
-    comprador = models.ForeignKey(User, on_delete=models.CASCADE)
-    talla = models.CharField(max_length=5, null=True,blank=True)
-    articulo = models.ForeignKey(Mercancia, on_delete=models.RESTRICT)
-    fecha = models.DateTimeField()
+class SellOffer(models.Model):
+    offer = models.IntegerField()
+    seller = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='owner')
+    size = models.CharField(max_length=5, null=True,blank=True)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    date = models.DateTimeField()
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo.modelo} - {self.talla} | {self.comprador}"
+        return f"Oferta en {self.product.model} {self.size} cm - ${self.offer}.00 mxn | {self.seller}"
 
-class Successful_offer(models.Model):
-    oferta_comprada = models.OneToOneField(Oferta_compra, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='comprada')
-    oferta_vendida = models.OneToOneField(Oferta_venta, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='vendida')
-    #ganador, aquel que acepta la oferta de compra o venta
-    ganador = models.ForeignKey(User, on_delete=models.CASCADE)
-    comision = models.FloatField()
+# class Successful_offer(models.Model):
+#     oferta_comprada = models.OneToOneField(Oferta_compra, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='comprada')
+#     oferta_vendida = models.OneToOneField(Oferta_venta, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='vendida')
+#     #ganador, aquel que acepta la oferta de compra o venta
+#     ganador = models.ForeignKey(User, on_delete=models.CASCADE)
+#     comision = models.FloatField()
 
-    # def select_offer(self):
-    #     if self.oferta_vendida != None:
-    #         return "Oferta vendida"
-    #     else:
-    #         return "Oferta_comprada"
+#     # def select_offer(self):
+#     #     if self.oferta_vendida != None:
+#     #         return "Oferta vendida"
+#     #     else:
+#     #         return "Oferta_comprada"
 
-    def __str__(self):
-        return f"Comprada:{self.oferta_vendida} - Vendida:{self.oferta_comprada} | Ganador:{self.ganador}"
+#     def __str__(self):
+#         return f"Comprada:{self.oferta_vendida} - Vendida:{self.oferta_comprada} | Ganador:{self.ganador}"
 
-class Ofertas_compradas(models.Model):
-    monto = models.IntegerField()
+class SuccessfulOffer(models.Model):
+    offer = models.IntegerField()
     comision= models.FloatField()
-    comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comprador')
-    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
-    talla = models.CharField(max_length=5, null=True,blank=True)
-    articulo = models.ForeignKey(Mercancia, on_delete=models.CASCADE)
-    fecha = models.DateTimeField()
+    buyer = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='comprador')
+    seller = models.ForeignKey(Client, on_delete=models.CASCADE)
+    size = models.CharField(max_length=5, null=True,blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date = models.DateTimeField()
     def __str__(self):
-        return f"${self.monto}.00 mxn en {self.articulo.modelo} - De:{self.vendedor} | Para:{self.comprador} | Comisión:${self.comision}"
+        return f"${self.offer}.00 mxn en {self.product.model} - De:{self.seller} Para:{self.buyer} | Comisión:${self.comision} - Día: {self.date}"
 
 
 # class CustomAccountManager(BaseUserManager):
