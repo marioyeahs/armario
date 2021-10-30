@@ -10,4 +10,11 @@
 
 <h1>{{object.user}}</h1>
 
+<h1>Mis pares</h1>
+<ul>
+    {% for i in purchases %}
+        <li>{{i.product}}</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
