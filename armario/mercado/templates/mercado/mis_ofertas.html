@@ -13,7 +13,7 @@
 <h1>Compra:</h1>
 <ul>
     {% for i in buy_offers %}
-        <li><a href="{% url 'mercado:detalles' i.id %}">{{ i.product }}</a> - ${{i.offer}}</li>
+        <li><a href="{% url 'mercado:detalles' i.product.id %}">{{ i.product }}</a> - ${{i.offer}}</li>
     {% empty %}
         <li>No hay pujas de compra</li>
     {% endfor %}
@@ -21,7 +21,7 @@
 <h1>Venta:</h1>
 <ul>
     {% for i in sell_offers %}
-        <li><a href="{% url 'mercado:detalles' i.id %}">{{ i.product }} - ${{i.offer}}</a></li>
+        <li><a href="{% url 'mercado:detalles' i.product.id %}">{{ i.product }} - ${{i.offer}}</a></li>
     {% empty %}
         <li>No hay ofertas</li>
     {% endfor %}
@@ -29,7 +29,7 @@
 <h1>Existosas</h1>
 <ul>
     {% for i in successfull_offers %}
-        <li><a href="{% url 'mercado:detalles' i.id %}">{{ i.product }}</a> - ${{i.offer}}</li>
+        <li><a href="{% url 'mercado:detalles' i.product.id %}">{{ i.product }}</a> - ${{i.offer}}</li>
     {% empty %}
         <li>No hay ofertas exitosas</li>
     {% endfor %}
