@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView
@@ -8,24 +9,22 @@ from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from mercado.forms import RegisterForm
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
-from datetime import datetime 
 from django.utils.decorators import method_decorator
+from django.contrib.auth.backends import BaseBackend
+from mercado.forms import RegisterForm
+from .models import Client, Brand, Product, BuyOffer, SellOffer, SuccessfulOffer
 
-# Create your views here.
-from .models import Cliente, Marca, Mercancia, Oferta_compra, Oferta_venta, Ofertas_compradas
-
-def fam_member(type,dept):
+def fam_member(type: str,dept: str):
     sizes = []
-    if dept == 'CZ':
+    if dept == 'SH':
         if type == 'M':
-            for i in range(23,31):
+            for i in range(25,32):
                 sizes+=[f'{i} cm']
         elif type == 'W':
-            for i in range (23,28):
+            for i in range (23,27):
                 sizes+=[f'{i} cm']
         elif type == 'GS':
             for i in range (21,25):
@@ -33,7 +32,7 @@ def fam_member(type,dept):
         elif type == 'PS':
             for i in range (15,21):
                 sizes+=[f'{i} cm']
-    elif dept == 'RP':
+    elif dept == 'CL':
         sizes=['XS','S','M','L','XL','XXL']
 
     return sizes
@@ -49,15 +48,15 @@ def discount_comission(request):
     request.session['total']=request.session['monto']-200-request.session['comision']
 
 class IndexListView(ListView):
-    model = Mercancia
+    model = Product
     template_name = "mercado/index.html"
     
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the context
         context = super(IndexListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
-        context['marcas'] = Marca.objects.all().values_list('nombre',flat=True)
-        context['deptos'] = Mercancia.DEPTO
+        context['marcas'] = Brand.objects.all().values_list('name',flat=True)
+        context['deptos'] = Product.DEPT
 
         return context
 
@@ -74,7 +73,7 @@ class RegisterFormView(SuccessMessageMixin, FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            usuario = form.cleaned_data['usuario']
+            user = form.cleaned_data['usuario']
             email = form.cleaned_data['email']
             passwd = form.cleaned_data['passwd']
             confirm_passwd = form.cleaned_data['confirm_passwd']
@@ -84,9 +83,9 @@ class RegisterFormView(SuccessMessageMixin, FormView):
                 return HttpResponseRedirect(reverse('mercado:register'))
 
             phone = form.cleaned_data['phone']
-            new_user = User.objects.create_user(usuario,email,passwd)
+            new_user = User.objects.create_user(user,email,passwd)
             new_user.save()
-            new_client = Cliente(user=new_user,numero=phone)
+            new_client = Client(user=new_user,number=phone)
             new_client.save()
             form.send_email()
             messages.success(request, 'Usuario registrado correctamente, se ha enviado un correo de verificación a %s' %email)
@@ -95,35 +94,44 @@ class RegisterFormView(SuccessMessageMixin, FormView):
     
         return render(request,self.template_name, {'form':form})
 
+# class MyBackend(BaseBackend):
+#     def authenticate(self, request, username=None, password=None):
+#         # Check the username/password and return a user.
+#         if username.password in User.objects.all():
+#             print("ok")
+#             return username
+#     def get_user(user):
+#         return User.objects.filter()
+
 def detalles(request,pk):
-    producto = get_object_or_404(Mercancia, pk=pk)
-    tallas = fam_member(producto.size_type,producto.depto)
-    ofertas_compra=[]
-    ofertas_venta=[]
+    product = get_object_or_404(Product, pk=pk)
+    sizes = fam_member(product.size_type,product.dept)
+    buy_bids=[]
+    sell_offers=[]
 
-    for talla in tallas:
-        ofertas_compra+=[Oferta_compra.objects.filter(articulo=producto,talla=talla).values_list('monto',flat=True).order_by('monto').last()]
+    for size in sizes:
+        buy_bids+=[BuyOffer.objects.filter(product=product,size=size).values_list('offer',flat=True).order_by('offer').last()]
 
-    for talla in tallas:
-        ofertas_venta+=[Oferta_venta.objects.filter(articulo=producto,talla=talla).values_list('monto',flat=True).order_by('monto').first()]
+    for size in sizes:
+        sell_offers+=[SellOffer.objects.filter(product=product,size=size).values_list('offer',flat=True).order_by('offer').first()]
     
-    compras=zip(tallas,ofertas_venta,ofertas_compra)
-    ventas=zip(tallas,ofertas_compra, ofertas_venta)
+    to_buy=zip(sizes,sell_offers,buy_bids)
+    to_sell=zip(sizes,buy_bids, sell_offers)
     
-    for i in Mercancia.DEPTO:
-        if producto.depto in i:
-            depto=i
+    for i in Product.DEPT:
+        if product.dept in i:
+            dept=i
 
-    return render(request,"mercado/detalles.html", {
-        'producto':producto,
-        'tallas':tallas,
-        'ventas':ventas,
-        'compras':compras,
-        'depto': depto
+    return render(request, "mercado/detalles.html", {
+        'producto':product,
+        'tallas':sizes,
+        'ventas':to_sell,
+        'compras':to_buy,
+        'depto': dept
         })  
 
 def compra(request, producto_id):
-    producto = get_object_or_404(Mercancia, pk=producto_id)
+    product = get_object_or_404(Product, pk=producto_id)
 
     try:
         request.session['talla']=request.POST['talla']
@@ -137,21 +145,21 @@ def compra(request, producto_id):
             print('-----------Comprar ahora----------------')
             add_checkout(request)
 
-            return HttpResponseRedirect(reverse('mercado:oferta_compra',args=(producto.id,)))
+            return HttpResponseRedirect(reverse('mercado:oferta_compra',args=(product.id,)))
 
-    except(KeyError,producto.DoesNotExist):
+    except(KeyError,product.DoesNotExist):
 
         return render(request, "mercado/compra.html",{
-            'producto':producto,
+            'producto':product,
             'error_message':"You didn´t select a Size"
             })
 
     else:
 
-        return HttpResponseRedirect(reverse('mercado:compra',args=(producto.id,)))
+        return HttpResponseRedirect(reverse('mercado:compra',args=(product.id,)))
 
 def venta(request,producto_id):
-    producto = get_object_or_404(Mercancia, pk=producto_id)
+    product = get_object_or_404(Product, pk=producto_id)
     try:
         request.session['talla']=request.POST['talla']
         if request.POST['monto']:
@@ -163,51 +171,49 @@ def venta(request,producto_id):
             print('-----------Vender ahora----------------')
             discount_comission(request)
 
-            return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(producto.id,)))
+            return HttpResponseRedirect(reverse('mercado:oferta_venta',args=(product.id,)))
 
-    except(KeyError,producto.DoesNotExist):
+    except(KeyError,product.DoesNotExist):
 
         return render(request, "mercado/venta.html",{
-            'producto':producto,
+            'producto':product,
             'error_message':"You didn´t select a Size"
             })
     else:
 
-        return HttpResponseRedirect(reverse('mercado:venta',args=(producto.id,)))
+        return HttpResponseRedirect(reverse('mercado:venta',args=(product.id,)))
 
 def oferta_compra(request,producto_id):
-    producto = Mercancia.objects.get(id=producto_id)
+    product = Product.objects.get(id=producto_id)
     comision = request.session['comision']
     return render(request,"mercado/oferta_compra.html",{
-        "producto":producto,
+        "producto":product,
         "comision": round(comision,2)
         })
 
 def oferta_venta(request,producto_id):
-    producto = Mercancia.objects.get(id=producto_id)
+    product = Product.objects.get(id=producto_id)
     comision = request.session['comision']
     return render(request,"mercado/oferta_venta.html",{
-        "producto":producto,
+        "producto":product,
         "comision": round(comision,2)
         })
 
 @login_required
 def oferta_comprada(request,producto_id):
     """
-        Cuando se acepta una oferta de venta, se crea una acepta una
-        oferta de comprada
+        aceptar una oferta de venta; el usuario compra la oferta de venta mas baja
     """
-
-    producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.session['monto'])
+    product = get_object_or_404(Product, pk=producto_id)
+    offer=int(request.session['monto'])
     size=request.session['talla']
-    o=Oferta_venta.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
+    successful_offer=SellOffer.objects.filter(offer=offer, size=size, product=product.id).first()
 
-    message1=('Felicidades, has vendido {{producto}}',
+    message1=('Felicidades, has vendido {{product}}',
     "Enhorabuena, por favor envíanos tu producto en su caja original",
     # DEFAULT_FROM_EMAIL setting.,
     'webmaster@localhost',
-    [o.comprador.email])
+    [successful_offer.seller.user.email])
     message2=('Se ha aceptado tu oferta!', 
     'Felicidades, tu producto llegará en los próximos días hábiles',
     # DEFAULT_FROM_EMAIL setting.,
@@ -215,81 +221,86 @@ def oferta_comprada(request,producto_id):
     [request.user.email])
     send_mass_mail((message1,message2), fail_silently=False)
 
-    comision = round(.07*monto,2)
+    comision = round(.07*offer,2)
     # Successful_offer.objects.create(oferta_comprada=None, oferta_vendida=o, ganador=request.user, comision=comision)
-    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=request.user,vendedor=o.comprador,talla=size, articulo=producto,fecha=datetime.today())
-    o.delete()
+    SuccessfulOffer.objects.create(offer=offer,comision=comision,buyer=request.user.client,seller=successful_offer.seller,size=size, product=product,date=datetime.today())
+    successful_offer.delete()
 
     return render(request,"mercado/oferta_comprada.html",{
         'usuario':request.user.username,
-        'producto':producto,
-        'monto':monto,
+        'producto':product,
+        'monto':offer,
         'talla':size,
     })
 
 @login_required
 def oferta_vendida(request,producto_id):
-    producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.session['monto'])
+    product = get_object_or_404(Product, pk=producto_id)
+    offer=int(request.session['monto'])
     size=request.session['talla']
-    o=Oferta_compra.objects.filter(monto=monto, talla=size, articulo=producto.id).first()
+    successful_offer=BuyOffer.objects.filter(offer=offer, size=size, product=product.id).first()
 
     message1=('Felicidades, has vendido {{producto}}',
     "Enhorabuena, por favor envíanos tu producto en su caja original",
     'webmaster@localhost',
     [request.user.email])
     message2=('Se ha aceptado tu oferta!', 
-    'Felicidades, tu producto llegará en los próximos días hábiles',
+    'Felicidades, {{producto}} llegará en los próximos 5 días hábiles',
     'webmaster@localhost',
-    [o.comprador.email])
+    [successful_offer.buyer.user.email])
     send_mass_mail((message1,message2), fail_silently=False)
 
-    comision = round(.07*monto,2)
+    comision = round(.07*offer,2)
     # Successful_offer.objects.create(oferta_comprada=o, oferta_vendida=None, ganador=request.user, comision=comision)
 
-    Ofertas_compradas.objects.create(monto=monto,comision=comision,comprador=o.comprador, vendedor=request.user ,talla=size, articulo=producto,fecha=datetime.today())
-    o.delete()
+    SuccessfulOffer.objects.create(offer=offer,comision=comision,buyer=successful_offer.buyer.user.client, seller=request.user.client ,size=size, product=product,date=datetime.today())
+    successful_offer.delete()
     return render(request,"mercado/oferta_vendida.html",{
         'usuario':request.user.username,
-        'producto':producto,
-        'monto':monto,
+        'producto':product,
+        'monto':offer,
         'talla':size,
     })
+
+def check_duplicated(request,duplicated_offer,product):
+    if duplicated_offer:
+        print('oferta duplicada')
+        print(duplicated_offer)
+        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
+        print("!!!!     Oferta de venta duplicada   !!!!")
+
+        return HttpResponseRedirect(reverse('mercado:detalles', args=(product.id,)))
 
 #buy offer sent successfully
 @login_required
 def oferta_compra_enviada(request,producto_id):
-    usuario = User.objects.get(pk=request.user.pk)
-    producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=request.session['monto']
+    user = Client.objects.get(pk=request.user.pk)
+    product = get_object_or_404(Product, pk=producto_id)
+    offer=request.session['monto']
     size=request.session['talla']
-    o=Oferta_compra(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())
+    bid_sent=BuyOffer(offer=offer,buyer=user,size=size,product=product,date=datetime.today())
+
+    duplicated_offer = BuyOffer.objects.filter(buyer=user,size=size,product=product)
 
     #check duplicated
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
-    print(oferta_duplicada)
-    if oferta_duplicada:
-        messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
-        print("!!!!     Oferta de venta duplicada   !!!!")
-        
-        return HttpResponseRedirect(reverse('mercado:detalles', args=(producto.id,)))
+    check_duplicated(request,duplicated_offer,product)
     
-    users=Oferta_compra.objects.filter(talla=size,articulo=producto).distinct('comprador')
+    users=BuyOffer.objects.filter(size=size,product=product).distinct('buyer')
     emails=[]
     for i in users:
-        emails.append(i.comprador.email)
+        emails.append(i.buyer.user.email)
     message1=('Tu oferta de compra está activa',
     'En este momento tu oferta ha sido activada',
     'armario@armario.com',
     [request.user.email])
 
-    oferta_mayor=Oferta_compra.objects.filter(talla=size,articulo=producto).order_by('monto').last()
+    oferta_mayor=BuyOffer.objects.filter(size=size,product=product).order_by('offer').last()
     try:
-        oferta_mayor=oferta_mayor.monto
+        oferta_mayor=oferta_mayor.offer
     except AttributeError:
         oferta_mayor=0
         
-    if(o.monto > oferta_mayor):
+    if(bid_sent.offer > oferta_mayor):
         print("oferta mayor")
         message2=('Una oferta mayor ha sido colocada',
                     'Alguien ha superado tu oferta, que no te lo ganen!',
@@ -304,47 +315,46 @@ def oferta_compra_enviada(request,producto_id):
     [request.user.email]
     , fail_silently=False)
 
-    o.save()
+    bid_sent.save()
     
     return render(request,"mercado/oferta_compra_enviada.html",{
-        "producto":producto,
+        "producto":product,
         "talla":size,
-        "monto":monto,
+        "monto":offer,
         })
-
 
 #sell offer sent successfully
 @login_required
 def oferta_venta_enviada(request,producto_id):
-    usuario = User.objects.get(pk=request.user.pk)
-    producto = get_object_or_404(Mercancia, pk=producto_id)
-    monto=int(request.session['monto'])
+    user = Client.objects.get(pk=request.user.pk)
+    product = get_object_or_404(Product, pk=producto_id)
+    offer=int(request.session['monto'])
     size=request.session['talla']
-    o=Oferta_venta(monto=monto,comprador=usuario,talla=size,articulo=producto,fecha=datetime.today())    
+    offer_sent=SellOffer(offer=offer,seller=user,size=size,product=product,date=datetime.today())    
 
     #check duplicated offer
-    oferta_duplicada = Oferta_compra.objects.filter(comprador=usuario,talla=size,articulo=producto)
+    oferta_duplicada = BuyOffer.objects.filter(buyer=user,size=size,product=product)
     print(oferta_duplicada)
     if oferta_duplicada:
         messages.add_message(request, messages.INFO, "Ya has creado una oferta en esta talla!!!")
         print("!!!!     Oferta de venta duplicada   !!!!")
         
-        return HttpResponseRedirect(reverse('mercado:detalles', args=(producto.id,)))
+        return HttpResponseRedirect(reverse('mercado:detalles', args=(product.id,)))
     
-    users=Oferta_venta.objects.filter(talla=size,articulo=producto).distinct('comprador')
+    users=SellOffer.objects.filter(size=size,product=product).distinct('seller')
     emails=[]
     for i in users:
-        emails.append(i.comprador.email)
+        emails.append(i.seller.user.email)
     message1=('Tu oferta de venta está activa',
     'En este momento tu oferta ha sido activada',
     'armario@armario.com',
     [request.user.email])
-    oferta_mayor=Oferta_venta.objects.filter(talla=size,articulo=producto).order_by('monto').first()
+    oferta_mayor=SellOffer.objects.filter(size=size,product=product).order_by('offer').first()
     try:
-        oferta_mayor=oferta_mayor.monto
+        oferta_mayor=oferta_mayor.offer
     except AttributeError:
         oferta_mayor=0
-    if(o.monto < oferta_mayor):
+    if(offer_sent.offer < oferta_mayor):
         message2=('Una oferta menor ha sido colocada',
                     'Alguien ha superado tu oferta, que no te lo ganen!',
                     'armario@armario.com',
@@ -358,25 +368,25 @@ def oferta_venta_enviada(request,producto_id):
     [request.user.email]
     , fail_silently=False)
 
-    o.save()
+    offer_sent.save()
 
     return render(request,"mercado/oferta_venta_enviada.html",{
-        "producto":producto,
+        "producto":product,
         "talla":size,
-        "monto":monto,
+        "monto":offer,
         })
 
 @login_required
 def eliminar_compra(request,oferta_id):
-    oferta = get_object_or_404(Oferta_compra, pk=oferta_id)
-    oferta.delete()
+    offer = get_object_or_404(BuyOffer, pk=oferta_id)
+    offer.delete()
 
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
 @login_required
 def eliminar_venta(request,oferta_id):
-    oferta = get_object_or_404(Oferta_venta, pk=oferta_id)
-    oferta.delete()
+    offer = get_object_or_404(SellOffer, pk=oferta_id)
+    offer.delete()
 
     return HttpResponseRedirect(reverse('mercado:mis_ofertas'))
 
@@ -384,13 +394,13 @@ class ByBrandListView(ListView):
     context_object_name = 'list' #list of brands
     template_name = 'mercado/products_by_type.html'
     def get_queryset(self):
-        self.marca = get_object_or_404(Marca, nombre=self.kwargs['marca'])
-        return Mercancia.objects.filter(marca=self.marca)
+        self.marca = get_object_or_404(Brand, name=self.kwargs['marca'])
+        return Product.objects.filter(brand=self.marca)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type']=self.marca
-        context['brands']=Marca.objects.exclude(pk=self.marca.pk)
+        context['brands']=Brand.objects.exclude(pk=self.marca.pk)
         return context
 
 class ByDepartmentListView(ListView):
@@ -398,12 +408,12 @@ class ByDepartmentListView(ListView):
     template_name = 'mercado/products_by_type.html'
 
     def get_queryset(self):
-        return Mercancia.objects.filter(depto=self.kwargs['department'])
+        return Product.objects.filter(dept=self.kwargs['department'])
 
     def get_context_data(self, **kwargs):
         context = super(ByDepartmentListView,self).get_context_data(**kwargs)
         context['all']=[]
-        for depto in Mercancia.DEPTO:
+        for depto in Product.DEPT:
             context['all'].append(depto[1])
             if self.kwargs['department'] in depto:
                 context['type'] = depto[1]
@@ -415,15 +425,29 @@ class MyOffersListView(ListView):
     context_object_name = 'successfull_offers'
     template_name='mercado/mis_ofertas.html'
     def get_queryset(self):
-        return Ofertas_compradas.objects.filter(comprador=self.request.user).union(Ofertas_compradas.objects.filter(vendedor=self.request.user))
+        return SuccessfulOffer.objects.filter(buyer=self.request.user.client).union(SuccessfulOffer.objects.filter(seller=self.request.user.client))
 
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        context['buy_offers'] = Oferta_compra.objects.filter(comprador=self.request.user)
-        context['sell_offers'] = Oferta_venta.objects.filter(comprador=self.request.user)
+        client =  get_object_or_404(Client, pk=self.request.user.pk)
+        context['buy_offers'] = BuyOffer.objects.filter(buyer=client)
+        context['sell_offers'] = SellOffer.objects.filter(seller=client)
+        context['offers'] = zip(context['buy_offers'],context['sell_offers'])
         return context
 
+@method_decorator(login_required, name='dispatch')
 class ProfileDetailView(DetailView):
     def get_object(self):
-        return get_object_or_404(Cliente, pk=self.request.user.pk)
+        return get_object_or_404(Client, pk=self.request.user.pk)
+
+    def  get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['purchases'] = SuccessfulOffer.objects.filter(buyer=self.request.user.client)
+        return context
+
+def edit_profile(request,profile_id):
+    user = get_object_or_404(Client, pk=profile_id)
+    return render(request, "mercado/edit_profile.html", {
+        'user': user
+    })
 
