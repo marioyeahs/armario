@@ -1,0 +1,11 @@
+{% extends "mercado/layout.html" %}
+
+{% load static %}
+
+{% block head %}
+<title>{% block title %}{{object.user}}{% endblock %}</title>
+{% endblock %}
+
+{% block body %}
+    <h1>Editar perfil de {{user}}</h1>
+{% endblock %}
