@@ -4,15 +4,16 @@
 
 {% block head %}
 <title>{% block title %}{{object.user}}{% endblock %}</title>
+<script></script>
 {% endblock %}
 
 {% block body %}
 
-<h1>Hola, {{object.user.first_name}}!</h1>
+<h1>Hola, {{object.user.first_name}}({{object.user.id}})!</h1>
+<div><a href="{% url 'mercado:edit_profile' object.user.id %}">Editar perfil</a></div>
 
 <h2>Mi número</h2>
 <p>{{object.user.client.number}}</p>
-<h2></h2>
 
 <h1>Mis pares</h1>
 <ul>
