@@ -24,4 +24,5 @@ urlpatterns = [
     path('<int:producto_id>/oferta_compra/', views.oferta_compra, name='oferta_compra'),
     path('<int:producto_id>/oferta_comprada/', views.oferta_comprada, name='oferta_comprada'),
     path('mi_perfil/', ProfileDetailView.as_view(), name='my_profile'),
+    path('editar_perfil/<int:profile_id>/', views.edit_profile, name='edit_profile')
     ]
