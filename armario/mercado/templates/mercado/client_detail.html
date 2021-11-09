@@ -3,23 +3,23 @@
 {% load static %}
 
 {% block head %}
-<title>{% block title %}{{object.user}}{% endblock %}</title>
-<script></script>
+    <title>{% block title %}{{object.user}}{% endblock %}</title>
+    <script></script>
 {% endblock %}
 
 {% block body %}
 
-<h1>Hola, {{object.user.first_name}}({{object.user.id}})!</h1>
-<div><a href="{% url 'mercado:edit_profile' object.user.id %}">Editar perfil</a></div>
+    <h1>Hola, {{object.user.first_name}}({{object.user.id}})!</h1>
+    <a href="{% url 'mercado:edit_profile' %}">Editar perfil</a>
 
-<h2>Mi número</h2>
-<p>{{object.user.client.number}}</p>
+    <h2>Mi número</h2>
+    <p>{{object.user.client.number}}</p>
 
-<h1>Mis pares</h1>
-<ul>
-    {% for i in purchases %}
-        <li>{{i.product}}</li>
-    {% endfor %}
-</ul>
+    <h1>Mis pares</h1>
+    <ul>
+        {% for i in purchases %}
+            <li>{{i.product}}</li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
