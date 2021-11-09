@@ -14,7 +14,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.backends import BaseBackend
-from mercado.forms import RegisterFormView
+from mercado.forms import RegisterForm
 from .models import Client, Brand, Product, BuyOffer, SellOffer, SuccessfulOffer
 
 def fam_member(type: str,dept: str):
@@ -62,7 +62,7 @@ class IndexListView(ListView):
 
 class RegisterFormView(SuccessMessageMixin, FormView):
     template_name = 'mercado/register.html'
-    form_class = RegisterFormView
+    form_class = RegisterForm
     initial = {'key':'value'}
     success_message = "%(email)s was created successfully"
 
@@ -448,9 +448,9 @@ class ProfileDetailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class EditProfileForm (FormView):
     template_name = "mercado/edit_profile.html"
-    form_class = RegisterFormView
+    form_class = RegisterForm
     success_url = "mercado/client_detail.html"
 
-    # def form_valid(self, form):
-    #     return super().form_valid(form)
-
+    def form_valid(self, request):
+        form = self.form_class(request.POST)
+        return render(request,self.template_name, {'form':form})
