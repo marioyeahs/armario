@@ -4,8 +4,15 @@
 
 {% block head %}
 <title>{% block title %}{{object.user}}{% endblock %}</title>
+<script type="text/javascript" src="{% static 'mercado/js/edit_profile.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-    <h1>Editar perfil de {{user}}</h1>
+    <h1>Editar perfil de {{request.user}}</h1>
+
+    <form id="registerForm" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Editar perfil">
+    </form>
 {% endblock %}
