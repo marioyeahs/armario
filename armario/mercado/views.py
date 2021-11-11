@@ -73,7 +73,7 @@ class RegisterFormView(SuccessMessageMixin, FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            user = form.cleaned_data['usuario']
+            username = form.cleaned_data['usuario']
             email = form.cleaned_data['email']
             passwd = form.cleaned_data['passwd']
             confirm_passwd = form.cleaned_data['confirm_passwd']
@@ -83,7 +83,7 @@ class RegisterFormView(SuccessMessageMixin, FormView):
                 return HttpResponseRedirect(reverse('mercado:register'))
 
             phone = form.cleaned_data['phone']
-            new_user = User.objects.create_user(user,email,passwd)
+            new_user = User.objects.create_user(username,email,passwd)
             new_user.save()
             new_client = Client(user=new_user,number=phone)
             new_client.save()
@@ -455,16 +455,17 @@ class EditProfileFormView (FormView):
         form = self.form_class(request.POST)
         if form.is_valid():
             client = get_object_or_404(Client, pk=self.request.user.pk)
+            user_client = get_object_or_404(User,pk=self.request.user.pk)
             # if form.cleaned_data['passwd'] != request.user.password:
             #     messages.error(request, "por favor verifica las contraseñas")
 
             #     return HttpResponseRedirect(reverse('mercado:my_profile'))
-            request.user.username = form.cleaned_data['usuario']
-            client.number = form.cleaned_data['phone']
             #form.cleaned_data['confirm_passwd'] = form.cleaned_data['password']
-            client.save()
-            client.user.save()
             messages.success(request, "Se editó su perfil correctamente")
+            user_client.username = form.cleaned_data['usuario']
+            client.number = form.cleaned_data['phone']
+            client.save()
+            user_client.save()
 
             return HttpResponseRedirect(reverse('mercado:my_profile'))
 
