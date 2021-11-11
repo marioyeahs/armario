@@ -449,24 +449,23 @@ class ProfileDetailView(DetailView):
 class EditProfileFormView (FormView):
     template_name = "mercado/edit_profile.html"
     form_class = RegisterForm
-    success_url = "mercado/client_detail.html"
+    success_url = "mercado/edit_profile.html"
 
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
             client = get_object_or_404(Client, pk=self.request.user.pk)
             user_client = get_object_or_404(User,pk=self.request.user.pk)
-            # if form.cleaned_data['passwd'] != request.user.password:
-            #     messages.error(request, "por favor verifica las contraseñas")
-
-            #     return HttpResponseRedirect(reverse('mercado:my_profile'))
-            #form.cleaned_data['confirm_passwd'] = form.cleaned_data['password']
-            messages.success(request, "Se editó su perfil correctamente")
             user_client.username = form.cleaned_data['usuario']
             client.number = form.cleaned_data['phone']
+            if form.cleaned_data['passwd'] != form.cleaned_data['confirm_passwd']:
+                    messages.error(request, "por favor verifica las contraseñas")
+
+                    return HttpResponseRedirect(reverse('mercado:edit_profile'))
             client.save()
             user_client.save()
+            messages.success(request, "Se editó su perfil correctamente")
 
-            return HttpResponseRedirect(reverse('mercado:my_profile'))
+            return HttpResponseRedirect(reverse('mercado:edit_profile'))
 
         return render(request,self.template_name, {'form':form})
