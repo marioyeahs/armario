@@ -449,7 +449,6 @@ class ProfileDetailView(DetailView):
 class EditProfileFormView (FormView):
     template_name = "mercado/edit_profile.html"
     form_class = RegisterForm
-    success_url = "mercado/edit_profile.html"
 
     def post(self, request):
         form = self.form_class(request.POST)
@@ -466,6 +465,6 @@ class EditProfileFormView (FormView):
             user_client.save()
             messages.success(request, "Se editó su perfil correctamente")
 
-            return HttpResponseRedirect(reverse('mercado:edit_profile'))
+            return HttpResponseRedirect(reverse('mercado:my_profile'))
 
         return render(request,self.template_name, {'form':form})
