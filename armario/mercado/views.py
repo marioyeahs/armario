@@ -400,7 +400,7 @@ class ByBrandListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type']=self.marca
-        context['brands']=Brand.objects.exclude(pk=self.marca.pk)
+        #context['brands']=Brand.objects.exclude(pk=self.marca.pk)
         return context
 
 class ByDepartmentListView(ListView):
@@ -468,3 +468,16 @@ class EditProfileFormView (FormView):
             return HttpResponseRedirect(reverse('mercado:my_profile'))
 
         return render(request,self.template_name, {'form':form})
+
+class MyBids(ListView):
+    context_object_name = 'list'
+    template_name = 'mercado/my_offers.html'
+    
+    def get_queryset(self):
+        client = get_object_or_404(Client, pk=self.request.user.pk)
+        return BuyOffer.objects.filter(buyer=client)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['my_bids'] = BuyOffer.objects.filter(buyer=self.request.user)
+    #     return context
