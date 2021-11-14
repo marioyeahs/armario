@@ -4,12 +4,13 @@
 
 {% block head %}
     <title>{% block title %}{{object.user}}{% endblock %}</title>
-    <!-- <script type="text/javascript" src="{% static 'mercado/js/client_detail.js' %}"></script> -->
+    <script type="text/javascript" src="{% static 'mercado/js/client_detail.js' %}"></script>
 {% endblock %}
 
 {% block body %}
 
     <h1>Hola, {{object.user.username}}!</h1>
+
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -19,10 +20,11 @@
         {% endfor %}
     </ul>
     {% endif %}
-    <button>Editar perfil</button>
-    <button>Pujas</button>
-    <button>Ofertas</button>
-    <button>Mis pares</button>
+    
+    <button class='edit_profile'>Editar perfil</button>
+    <button class='bids'>Pujas</button>
+    <button class='offers'>Ofertas</button>
+    <button class='purchases'>Mis pares</button>
     <a href="{% url 'mercado:edit_profile' %}">Editar perfil</a>
 
     <div id="edit_profile"></div>
