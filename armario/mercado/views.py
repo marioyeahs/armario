@@ -400,7 +400,7 @@ class ByBrandListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type']=self.marca
-        #context['brands']=Brand.objects.exclude(pk=self.marca.pk)
+        context['brands']=Brand.objects.exclude(pk=self.marca.pk)
         return context
 
 class ByDepartmentListView(ListView):
@@ -469,15 +469,21 @@ class EditProfileFormView (FormView):
 
         return render(request,self.template_name, {'form':form})
 
-class MyBids(ListView):
-    context_object_name = 'list'
+class ProfileInfo(ListView):
+    # context_object_name = 'list'
+    context_object_name = 'client'
     template_name = 'mercado/my_offers.html'
-    
-    def get_queryset(self):
-        client = get_object_or_404(Client, pk=self.request.user.pk)
-        return BuyOffer.objects.filter(buyer=client)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['my_bids'] = BuyOffer.objects.filter(buyer=self.request.user)
-    #     return context
+    def get_queryset(self):
+        return Client.objects.get(pk=self.request.user.pk)
+
+    def get_context_data(self, **kwargs):
+        client =  get_object_or_404(Client, pk=self.request.user.pk)
+        context = super().get_context_data(**kwargs)
+        if (self.kwargs['info'] == 'BuyOffer'):
+            context['offers'] = BuyOffer.objects.filter(buyer=client)
+            print('BuyOffer')
+        elif (self.kwargs['info'] == SellOffer):
+            context['offers'] = SellOffer.objects.filter(seller=client)
+            print("SellOffer")
+        return context
