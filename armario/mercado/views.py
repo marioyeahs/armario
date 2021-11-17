@@ -481,9 +481,9 @@ class ProfileInfo(ListView):
         client =  get_object_or_404(Client, pk=self.request.user.pk)
         context = super().get_context_data(**kwargs)
         if (self.kwargs['info'] == 'BuyOffer'):
+            context['type']="Pujas"
             context['offers'] = BuyOffer.objects.filter(buyer=client)
-            print('BuyOffer')
-        elif (self.kwargs['info'] == SellOffer):
+        elif (self.kwargs['info'] == 'SellOffer'):
+            context['type']="Ofertas"
             context['offers'] = SellOffer.objects.filter(seller=client)
-            print("SellOffer")
         return context
