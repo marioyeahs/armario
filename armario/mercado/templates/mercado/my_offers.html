@@ -1,5 +1,8 @@
+<h1>{{type}}</h1>
 <ul>
-    {% for offer in list %}
+    {% for offer in offers %}
         <li>{{offer}}</li>
+    {% empty %}
+        <li>No offers.</li>
     {% endfor %}
 </ul>
