@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 
 from . import views
-from mercado.views import IndexListView, ProfileDetailView, RegisterFormView, ByBrandListView, ByDepartmentListView, MyOffersListView, EditProfileFormView, ProfileInfo
+from mercado.views import IndexListView, ProfileDetailView, RegisterFormView, ByBrandListView, ByDepartmentListView, EditProfileFormView, ProfileInfo, ProductDetailView
 
 app_name='mercado'
 urlpatterns = [
@@ -13,7 +13,7 @@ urlpatterns = [
     path('<int:producto_id>/oferta_compra_enviada/', views.oferta_compra_enviada, name='oferta_compra_enviada'),
     path('<int:producto_id>/oferta_venta_enviada/', views.oferta_venta_enviada,name='oferta_venta_enviada'),
     path('registro/', RegisterFormView.as_view(),name='register'),
-    path('mis_ofertas/', MyOffersListView.as_view(), name='mis_ofertas'),
+    #path('mis_ofertas/', MyOffersListView.as_view(), name='mis_ofertas'),
     path('productos/<marca>/', ByBrandListView.as_view(), name='marca'),
     path('departamento/<department>/', ByDepartmentListView.as_view(), name='department'),
     path('mis_ofertas/<int:oferta_id>/eliminar_venta/', views.eliminar_venta, name='eliminar_venta'),
@@ -23,7 +23,8 @@ urlpatterns = [
     path('<int:producto_id>/oferta_vendida/', views.oferta_vendida, name='oferta_vendida'),
     path('<int:producto_id>/oferta_compra/', views.oferta_compra, name='oferta_compra'),
     path('<int:producto_id>/oferta_comprada/', views.oferta_comprada, name='oferta_comprada'),
-    path('mi_perfil/', ProfileDetailView.as_view(), name='my_profile'),
+    path('<slug:slug>/', ProfileDetailView.as_view(), name='my_profile'),
     path('editar_perfil/', EditProfileFormView.as_view(), name='edit_profile'),
-    path('mi_perfil/<info>', ProfileInfo.as_view(), name='my_bids'),
+    #path('<slug:slug>/<info>/', ProfileInfo.as_view(), name='my_bids'),
+    # path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail')
     ]
