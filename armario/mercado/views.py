@@ -13,6 +13,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.contrib.auth.backends import BaseBackend
 from mercado.forms import RegisterForm
 from .models import Client, Brand, Product, BuyOffer, SellOffer, SuccessfulOffer
@@ -393,6 +394,7 @@ def eliminar_venta(request,oferta_id):
 class ByBrandListView(ListView):
     context_object_name = 'list' #list of brands
     template_name = 'mercado/products_by_type.html'
+
     def get_queryset(self):
         self.marca = get_object_or_404(Brand, name=self.kwargs['marca'])
         return Product.objects.filter(brand=self.marca)
@@ -412,38 +414,32 @@ class ByDepartmentListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ByDepartmentListView,self).get_context_data(**kwargs)
-        context['all']=[]
         for depto in Product.DEPT:
-            context['all'].append(depto[1])
             if self.kwargs['department'] in depto:
                 context['type'] = depto[1]
         # context['departments'].remove(context['type'])
         return context
 
-@method_decorator(login_required, name='dispatch')
-class MyOffersListView(ListView):
-    context_object_name = 'successfull_offers'
-    template_name='mercado/mis_ofertas.html'
-    def get_queryset(self):
-        return SuccessfulOffer.objects.filter(buyer=self.request.user.client).union(SuccessfulOffer.objects.filter(seller=self.request.user.client))
+# @method_decorator(login_required, name='dispatch')
+# class MyOffersListView(ListView):
+#     context_object_name = 'successfull_offers'
+#     template_name='mercado/mis_ofertas.html'
+#     def get_queryset(self):
+#         return SuccessfulOffer.objects.filter(buyer=self.request.user.client).union(SuccessfulOffer.objects.filter(seller=self.request.user.client))
 
-    def get_context_data(self,**kwargs):
-        context = super().get_context_data(**kwargs)
-        client =  get_object_or_404(Client, pk=self.request.user.pk)
-        context['buy_offers'] = BuyOffer.objects.filter(buyer=client)
-        context['sell_offers'] = SellOffer.objects.filter(seller=client)
-        context['offers'] = zip(context['buy_offers'],context['sell_offers'])
-        return context
+#     def get_context_data(self,**kwargs):
+#         context = super().get_context_data(**kwargs)
+#         client =  get_object_or_404(Client, pk=self.request.user.pk)
+#         context['buy_offers'] = BuyOffer.objects.filter(buyer=client)
+#         context['sell_offers'] = SellOffer.objects.filter(seller=client)
+#         context['offers'] = zip(context['buy_offers'],context['sell_offers'])
+#         return context
 
 @method_decorator(login_required, name='dispatch')
 class ProfileDetailView(DetailView):
-    def get_object(self):
-        return get_object_or_404(Client, pk=self.request.user.pk)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['purchases'] = SuccessfulOffer.objects.filter(buyer=self.request.user.client)
-        return context
+    model= Client
+    context_object_name = 'profile'
+    template_name = "mercado/my_profile.html"
 
 @method_decorator(login_required, name='dispatch')
 class EditProfileFormView (FormView):
@@ -470,7 +466,6 @@ class EditProfileFormView (FormView):
         return render(request,self.template_name, {'form':form})
 
 class ProfileInfo(ListView):
-    # context_object_name = 'list'
     context_object_name = 'client'
     template_name = 'mercado/my_offers.html'
 
@@ -486,4 +481,15 @@ class ProfileInfo(ListView):
         elif (self.kwargs['info'] == 'SellOffer'):
             context['type']="Ofertas"
             context['offers'] = SellOffer.objects.filter(seller=client)
+        elif (self.kwargs['info'] == 'SuccessfulOffer'):
+            context['type']="Concluidas"
+            context['offers'] = SuccessfulOffer.objects.filter(seller=client).union(SuccessfulOffer.objects.filter(buyer=client))
+        return context
+
+class ProductDetailView(DetailView):
+    model = Product
+
+    def get_context_data(self,**kwargs):
+        context=super().get_context_data(**kwargs)
+        context['now'] = timezone.now()
         return context
