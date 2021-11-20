@@ -24,7 +24,7 @@ urlpatterns = [
     path('<int:producto_id>/oferta_compra/', views.oferta_compra, name='oferta_compra'),
     path('<int:producto_id>/oferta_comprada/', views.oferta_comprada, name='oferta_comprada'),
     path('<slug:slug>/', ProfileDetailView.as_view(), name='my_profile'),
-    path('editar_perfil/', EditProfileFormView.as_view(), name='edit_profile'),
-    path('<slug:slug>/<info>/', ProfileInfo.as_view(), name='my_bids'),
-    # path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail')
+    path('<slug:slug>/editar_perfil/', EditProfileFormView.as_view(), name='edit_profile'),
+    path('<slug:slug>/<info>s/', ProfileInfo.as_view(), name='my_bids'),
+    path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail')
     ]
