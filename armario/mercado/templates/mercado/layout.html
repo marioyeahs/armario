@@ -20,8 +20,8 @@
     de este "next" para redirigir al usuario de vuelta a la página donde pincharon 
     primeramente el enlace de inicio/cierre de sesión. -->
             {% if user.is_authenticated %}
-                <li><a href="{% url 'mercado:my_profile'%}">Usuario: {{ user.get_username }}</a></li>
-                <li><a href="{% url 'mercado:mis_ofertas' %}">Mis ofertas</a></li>
+                <li><a href="{% url 'mercado:my_profile' user.get_username %}">{{ user.get_username }}</a></li>
+                <!-- mis_ofertas -->
                 <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
             {% else %}
                 <li><a href="{% url 'login' %}?next={{request.path}}">Iniciar Sesión</a></li>
