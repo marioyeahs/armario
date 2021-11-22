@@ -86,7 +86,7 @@ class RegisterFormView(SuccessMessageMixin, FormView):
             phone = form.cleaned_data['phone']
             new_user = User.objects.create_user(username,email,passwd)
             new_user.save()
-            new_client = Client(user=new_user,number=phone)
+            new_client = Client(user=new_user,number=phone, slug=username)
             new_client.save()
             form.send_email()
             messages.success(request, 'Usuario registrado correctamente, se ha enviado un correo de verificación a %s' %email)
@@ -465,9 +465,8 @@ class EditProfileFormView (FormView):
 
         return render(request,self.template_name, {'form':form})
 
-class ProfileInfo(ListView):
-    context_object_name = 'client'
-    template_name = 'mercado/my_offers.html'
+class AskBidListView(ListView):
+    template_name = 'mercado/ask_n_bid.html'
 
     def get_queryset(self):
         return Client.objects.get(pk=self.request.user.pk)
@@ -493,3 +492,10 @@ class ProductDetailView(DetailView):
         context=super().get_context_data(**kwargs)
         context['now'] = timezone.now()
         return context
+
+class AskListView(ListView):
+    model = BuyOffer
+
+    def get_queryset(self):
+        buyer = get_object_or_404(Client, pk=self.request.user.pk)
+        return BuyOffer.objects.filter(buyer=buyer)
