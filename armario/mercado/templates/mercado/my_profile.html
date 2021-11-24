@@ -9,37 +9,30 @@
 
 {% block body %}
 
-    <h1>Hola, {{object.user.username}}!</h1>
+    <h1>Hola, {{ profile.user.username }}!</h1>
 
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
             <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% empty %}
-            <li>No hay mensajes</li>
         {% endfor %}
     </ul>
     {% endif %}
-    
-    <!-- <button class='edit_profile'>Editar perfil</button> -->
+
     <button class='BuyOffer'>Pujas</button>
     <button class='SellOffer'>Ofertas</button>
     <button class='SuccessfulOffer'>Mis pares</button>
-    <a href="{% url 'mercado:edit_profile' %}">Editar perfil</a>
+    <a href="{% url 'mercado:edit_profile' user.get_username %}">Editar perfil</a>
 
-    <div id="edit_profile"></div>
     <div id="bids"></div>
-    <div id="offers"></div>
-    <div id="purchases"></div>
 
     <h2>Mi número</h2>
-    <p>{{object.user.client.number}}</p>
-
-    <h1>Mis pares</h1>
-    <ul>
-        {% for i in purchases %}
-            <li>{{i.product}}</li>
-        {% endfor %}
-    </ul>
+    <p>{{profile.number}}</p>
+    <h2>Mi correo</h2>
+    <p>{{profile.user.email}}</p>
+    <h2>Nombre completo:</h2>
+    <p>{{profile.user.first_name}} {{profile.user.last_name}}</p>
+    <h2>Activo desde:</h2>
+    <p>{{profile.user.date_joined}}</p>
 
 {% endblock %}
