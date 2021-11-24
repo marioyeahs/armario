@@ -17,10 +17,14 @@
         {% endfor %}
     </ul>
     {% endif %}
-    <h1>Editar perfil de {{request.user}}</h1>
+    <h1>Editar perfil de {{request.user.username}}</h1>
 
     <form id="registerForm" method="POST">
         {% csrf_token %}
+        <label for="first_name">Nombre:</label>
+        <input id="first_name" type="text" name="first_name">
+        <label for="last_name">Apellido:</label>
+        <input id="last_name" type="text" name="last_name">
         {{form.as_p}}
         <input type="submit" value="Editar perfil">
     </form>
