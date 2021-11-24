@@ -2,9 +2,10 @@ from django.urls import path
 from django.views.generic import TemplateView
 
 from . import views
-from mercado.views import IndexListView, ProfileDetailView, RegisterFormView, ByBrandListView, ByDepartmentListView, EditProfileFormView, ProfileInfo, ProductDetailView
+from mercado.views import IndexListView, ProfileDetailView, RegisterFormView, ByBrandListView, ByDepartmentListView, EditProfileFormView, AskBidListView, ProductDetailView, AskListView
 
 app_name='mercado'
+
 urlpatterns = [
     path('', IndexListView.as_view(),name='index'),
     path('<int:pk>/detalles/', views.detalles, name='detalles'),
@@ -25,6 +26,7 @@ urlpatterns = [
     path('<int:producto_id>/oferta_comprada/', views.oferta_comprada, name='oferta_comprada'),
     path('<slug:slug>/', ProfileDetailView.as_view(), name='my_profile'),
     path('<slug:slug>/editar_perfil/', EditProfileFormView.as_view(), name='edit_profile'),
-    path('<slug:slug>/<info>s/', ProfileInfo.as_view(), name='my_bids'),
-    path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail')
+    path('<slug:slug>/<info>s/', AskBidListView.as_view(), name='my_bids'),
+    path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
+    #path('<slug:slug>/asks/', AskListView.as_view(), name='asks'),
     ]
