@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
 # Create your models here.
@@ -9,8 +10,17 @@ from django.utils.translation import gettext as _
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     number = models.IntegerField()
+    slug =models.SlugField(max_length=255, null=True, unique=True)
     def __str__(self):
         return f"{self.user.username} - Celular:{self.number}"
+    def get_absolute_url(self):
+        return reverse('mercado:my_profile', kwargs={'slug':self.slug})
+        #save function creates slug based on the username to give us a better SEO
+        #what it does is before save it, the username get through slugify function
+        #and save it on the slug field, after that we store it on our bbdd
+    def save(self,*args, **kwargs):
+        self.slug = slugify(self.user.username)
+        super(Client, self).save(*args, **kwargs)
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
@@ -33,7 +43,7 @@ class Product(models.Model):
     )
     DEPT =(
         ('SH','Calzado'),
-        ('CL','Ropa'),
+        ('WR','Ropa'),
         ('WT','Reloj'),
         ('CL','Coleccionable')
     )
@@ -52,7 +62,7 @@ class BuyOffer(models.Model):
     product = models.ForeignKey(Product, on_delete=models.RESTRICT, related_name="product")
     date = models.DateTimeField()
     def __str__(self):
-        return f"Puja en {self.product.model} {self.size} cm - ${self.offer}.00 mxn | {self.buyer}"
+        return f"Puja en {self.product.model} {self.size} - ${self.offer}.00 mxn | {self.buyer}"
     
     def oferta_mayor_envio(self):
         """verify if the offer is greater than the deilvery cost"""
@@ -65,7 +75,7 @@ class SellOffer(models.Model):
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     date = models.DateTimeField()
     def __str__(self):
-        return f"Oferta en {self.product.model} {self.size} cm - ${self.offer}.00 mxn | {self.seller}"
+        return f"Oferta en {self.product.model} {self.size} - ${self.offer}.00 mxn | {self.seller}"
 
 # class Successful_offer(models.Model):
 #     oferta_comprada = models.OneToOneField(Oferta_compra, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='comprada')
@@ -91,8 +101,8 @@ class SuccessfulOffer(models.Model):
     size = models.CharField(max_length=5, null=True,blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date = models.DateTimeField()
-    def __str__(self):
-        return f"${self.offer}.00 mxn en {self.product.model} - De:{self.seller} Para:{self.buyer} | Comisión:${self.comision} - Día: {self.date}"
+    def __str__(cls):
+        return f"${cls.offer}.00 mxn en {cls.product.model} - De:{cls.seller} Para:{cls.buyer} | Comisión:${cls.comision} - Día: {cls.date}"
 
 
 # class CustomAccountManager(BaseUserManager):
