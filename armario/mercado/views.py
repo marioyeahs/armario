@@ -451,6 +451,8 @@ class EditProfileFormView (FormView):
         if form.is_valid():
             client = get_object_or_404(Client, pk=self.request.user.pk)
             user_client = get_object_or_404(User,pk=self.request.user.pk)
+            user_client.first_name = form.cleaned_data['first_name']
+            user_client.last_name = form.cleaned_data['last_name']
             user_client.username = form.cleaned_data['usuario']
             client.number = form.cleaned_data['phone']
             if form.cleaned_data['passwd'] != form.cleaned_data['confirm_passwd']:
